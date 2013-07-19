@@ -1,0 +1,21 @@
+#!/bin/sh
+cd ../code/net/Sungiant.Djinn/
+xbuild Sungiant.Djinn\ \(net40\).csproj /p:Configuration=Debug
+cp djinn /usr/local/bin/djinn
+chmod +x /usr/local/bin/djinn
+cp bin/Debug/Sungiant.Djinn.exe /usr/local/bin/Sungiant.Djinn.exe
+cp bin/Debug/*.dll /usr/local/bin/
+
+TIME="$(date +%s)"
+DEPLOYMENTS_DIR="`pwd`"
+echo "{" > $HOME/.djinn
+echo "    \"InstallTime\":$TIME," >> $HOME/.djinn
+echo "    \"ActiveWorkgroup\":0," >> $HOME/.djinn
+echo "    \"Workgroups\":" >> $HOME/.djinn
+echo "    [" >> $HOME/.djinn
+echo "        {" >> $HOME/.djinn
+echo "            \"RepoDirectory\":\"$HOME/repos/\"," >> $HOME/.djinn
+echo "            \"SpecFilePath\":\"$HOME/repos/djinn_configuration.xml\"," >> $HOME/.djinn
+echo "        }" >> $HOME/.djinn
+echo "    ]" >> $HOME/.djinn
+echo "}" >> $HOME/.djinn

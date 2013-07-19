@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>12.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7B1E3659-071D-44B1-B32E-0C1882D35C17}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Sungiant.Djinn</RootNamespace>
+    <AssemblyName>Sungiant.Djinn</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <Commandlineparameters>ssh test-deployment dev-box</Commandlineparameters>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source\Djinn.cs" />
+    <Compile Include="Source\DjinnConfiguration.cs" />
+    <Compile Include="Source\ActionContext.cs" />
+    <Compile Include="Source\Action.cs" />
+    <Compile Include="Source\ActionType.cs" />
+    <Compile Include="Source\Actions\XBuild.cs" />
+    <Compile Include="Source\Actions\MdToolBuild.cs" />
+    <Compile Include="Source\Actions\Command.cs" />
+    <Compile Include="Source\Actions\Rsync.cs" />
+    <Compile Include="Source\Actions\Scp.cs" />
+    <Compile Include="Source\Actions\AptitudeInstallation.cs" />
+    <Compile Include="Source\DjinnTask.cs" />
+    <Compile Include="Source\Tasks\DjinnConfigureTask.cs" />
+    <Compile Include="Source\Tasks\DjinnDestroyTask.cs" />
+    <Compile Include="Source\Tasks\DjinnDeployTask.cs" />
+    <Compile Include="Source\Tasks\DjinnDescribeTask.cs" />
+    <Compile Include="Source\Tasks\DjinnProvisionTask.cs" />
+    <Compile Include="Source\Tasks\DjinnSshTask.cs" />
+    <Compile Include="Source\Task.cs" />
+    <Compile Include="Source\Environment\Deployment.cs" />
+    <Compile Include="Source\Environment\DeploymentGroup.cs" />
+    <Compile Include="Source\Environment\MachineBlueprint.cs" />
+    <Compile Include="Source\Environment\Specifications\MachineBlueprintSpecification.cs" />
+    <Compile Include="Source\Environment\Specifications\DeploymentGroupSpecification.cs" />
+    <Compile Include="Source\Environment\Specifications\DeploymentSpecification.cs" />
+    <Compile Include="Source\DjinnEnvironment.cs" />
+    <Compile Include="Source\Actions\UpstartDaemon.cs" />
+    <Compile Include="Source\Actions\NginxServerBlock.cs" />
+    <Compile Include="Source\ActionGroup.cs" />
+    <Compile Include="Source\DjinnEnvironmentSpecification.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Properties\" />
+    <Folder Include="Source\" />
+    <Folder Include="Source\Actions\" />
+    <Folder Include="Source\Tasks\" />
+    <Folder Include="Source\Environment\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="djinn" />
+    <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sungiant.Cloud\Sungiant.Cloud %28net40%29.csproj">
+      <Project>{39484047-9CD3-48FE-8D58-220ED4D4106D}</Project>
+      <Name>Sungiant.Cloud (net40)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sungiant.Core\Sungiant.Core %28net40%29.csproj">
+      <Project>{043738D8-7F8A-423C-BE25-F11A08F77F35}</Project>
+      <Name>Sungiant.Core (net40)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\ServiceStack.Text\src\ServiceStack.Text.Net40\ServiceStack.Text.Net40.csproj">
+      <Project>{15BF26C8-92F8-445D-8FFC-7882A519B67D}</Project>
+      <Name>ServiceStack.Text.Net40</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\NDesk.Options\NDesk.Options %28net40%29.csproj">
+      <Project>{4DB54B83-D948-4D70-86BD-5EE2DC8E2CE8}</Project>
+      <Name>NDesk.Options (net40)</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

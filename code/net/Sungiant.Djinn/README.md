@@ -1,0 +1,1 @@
+Djinn is a utility for deploying Sungiant's online infrastructure.

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>12.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{39484047-9CD3-48FE-8D58-220ED4D4106D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Sungiant.Cloud</RootNamespace>
+    <AssemblyName>Sungiant.Cloud</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source\Aws\Aws.cs" />
+    <Compile Include="Source\Aws\AwsCredentials.cs" />
+    <Compile Include="Source\Azure\Azure.cs" />
+    <Compile Include="Source\Azure\AzureCredentials.cs" />
+    <Compile Include="Source\ICloudProvider.cs" />
+    <Compile Include="Source\Aws\AwsEc2SecurityGroupHelper.cs" />
+    <Compile Include="Source\Aws\AwsEc2Helper.cs" />
+    <Compile Include="Source\Aws\AwsCloudDeployment.cs" />
+    <Compile Include="Source\Azure\AzureCloudDeployment.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Properties\" />
+    <Folder Include="Source\Aws\" />
+    <Folder Include="Source\Azure\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sungiant.Core\Sungiant.Core %28net40%29.csproj">
+      <Project>{043738D8-7F8A-423C-BE25-F11A08F77F35}</Project>
+      <Name>Sungiant.Core (net40)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\aws-sdk-net\AWSSDK\AWSSDKSrc.csproj">
+      <Project>{40E91E2D-70F3-463D-9E3E-408AE2A70BA8}</Project>
+      <Name>AWSSDKSrc</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\ServiceStack.Text\src\ServiceStack.Text.Net40\ServiceStack.Text.Net40.csproj">
+      <Project>{15BF26C8-92F8-445D-8FFC-7882A519B67D}</Project>
+      <Name>ServiceStack.Text.Net40</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
