@@ -1,6 +1,6 @@
 [submodule "submodules/core"]
 	path = submodules/core
-	url = git@github.com:ashleighpook/core.git
+url=git@github.com:sungiant/core.git
 [submodule "submodules/ServiceStack.Text"]
 	path = submodules/ServiceStack.Text
 	url = git@github.com:sungiant/ServiceStack.Text.git
