@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.Text.Net40", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AWSSDKSrc", "..\..\submodules\aws-sdk-net\AWSSDK\AWSSDKSrc.csproj", "{40E91E2D-70F3-463D-9E3E-408AE2A70BA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NDesk.Options (net40)", "..\..\submodules\NDesk.Options\NDesk.Options (net40).csproj", "{4DB54B83-D948-4D70-86BD-5EE2DC8E2CE8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NDesk.Options (net40)", "..\..\submodules\ndesk-options-mirror\custom_projects\NDesk.Options\NDesk.Options (net40).csproj", "{4DB54B83-D948-4D70-86BD-5EE2DC8E2CE8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
