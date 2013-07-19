@@ -91,5 +91,9 @@
       <Project>{15BF26C8-92F8-445D-8FFC-7882A519B67D}</Project>
       <Name>ServiceStack.Text.Net40</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\ndesk-options-mirror\custom_projects\NDesk.Options\NDesk.Options %28net40%29.csproj">
+      <Project>{4DB54B83-D948-4D70-86BD-5EE2DC8E2CE8}</Project>
+      <Name>NDesk.Options (net40)</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
