@@ -5,8 +5,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cloud (net40)", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Djinn (net40)", "Sungiant.Djinn\Sungiant.Djinn (net40).csproj", "{7B1E3659-071D-44B1-B32E-0C1882D35C17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Core (net40)", "Sungiant.Core\Sungiant.Core (net40).csproj", "{043738D8-7F8A-423C-BE25-F11A08F77F35}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Contrib", "Contrib", "{A95B02E0-D263-4EF0-8663-B03A9327734E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.Text.Net40", "..\..\submodules\ServiceStack.Text\src\ServiceStack.Text.Net40\ServiceStack.Text.Net40.csproj", "{15BF26C8-92F8-445D-8FFC-7882A519B67D}"
@@ -14,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AWSSDKSrc", "..\..\submodules\aws-sdk-net\AWSSDK\AWSSDKSrc.csproj", "{40E91E2D-70F3-463D-9E3E-408AE2A70BA8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NDesk.Options (net40)", "..\..\submodules\ndesk-options-mirror\custom_projects\NDesk.Options\NDesk.Options (net40).csproj", "{4DB54B83-D948-4D70-86BD-5EE2DC8E2CE8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Core (net40)", "..\..\submodules\core\build_examples\Sungiant.Core\Sungiant.Core (net40).csproj", "{043738D8-7F8A-423C-BE25-F11A08F77F35}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

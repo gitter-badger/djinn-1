@@ -51,10 +51,6 @@
     <Folder Include="Source\Azure\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sungiant.Core\Sungiant.Core %28net40%29.csproj">
-      <Project>{043738D8-7F8A-423C-BE25-F11A08F77F35}</Project>
-      <Name>Sungiant.Core (net40)</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\submodules\aws-sdk-net\AWSSDK\AWSSDKSrc.csproj">
       <Project>{40E91E2D-70F3-463D-9E3E-408AE2A70BA8}</Project>
       <Name>AWSSDKSrc</Name>
@@ -62,6 +58,10 @@
     <ProjectReference Include="..\..\..\submodules\ServiceStack.Text\src\ServiceStack.Text.Net40\ServiceStack.Text.Net40.csproj">
       <Project>{15BF26C8-92F8-445D-8FFC-7882A519B67D}</Project>
       <Name>ServiceStack.Text.Net40</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\core\build_examples\Sungiant.Core\Sungiant.Core %28net40%29.csproj">
+      <Project>{043738D8-7F8A-423C-BE25-F11A08F77F35}</Project>
+      <Name>Sungiant.Core (net40)</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
