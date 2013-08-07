@@ -10,7 +10,7 @@ namespace Sungiant.Djinn
 		: Action
 	{
 		public AptitudeInstallation(String description) 
-			: base(ActionType.AptitudeInstallation, description) { }
+			: base(description) { }
 
 		public List<String> PackageNames { get; set; }
 

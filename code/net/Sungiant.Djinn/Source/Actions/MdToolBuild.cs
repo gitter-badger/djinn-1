@@ -9,7 +9,7 @@ namespace Sungiant.Djinn
 	public class MdToolBuild
 		: Action
 	{
-		public MdToolBuild(String description) : base(ActionType.MdToolBuild, description) { }
+		public MdToolBuild(String description) : base(description) { }
 
 		public String Configuration { get; set; }
 		

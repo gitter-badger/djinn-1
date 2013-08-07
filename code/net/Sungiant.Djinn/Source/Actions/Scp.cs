@@ -10,7 +10,7 @@ namespace Sungiant.Djinn
 	public class Scp
 		: Action
 	{
-		public Scp(String description) : base(ActionType.Scp, description) { }
+		public Scp(String description) : base(description) { }
 
 		// sets the -r flag
 		public Boolean Recursive { get; set; }

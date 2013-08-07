@@ -12,7 +12,7 @@ namespace Sungiant.Djinn
 		: Action
 	{
 		public UpstartDaemon(String description) 
-			: base(ActionType.UpstartDaemon, description)
+			: base(description)
 		{
 		}
 		

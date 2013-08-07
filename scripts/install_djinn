@@ -15,7 +15,9 @@ echo "    \"Workgroups\":" >> $HOME/.djinn
 echo "    [" >> $HOME/.djinn
 echo "        {" >> $HOME/.djinn
 echo "            \"RepoDirectory\":\"$HOME/repos/\"," >> $HOME/.djinn
-echo "            \"SpecFilePath\":\"$HOME/repos/djinn_configuration.xml\"," >> $HOME/.djinn
+echo "            \"MachineBlueprintSpecificationsDirectory\":\"$HOME/repos/djinn_config/machine_blueprints/\"," >> $HOME/.djinn
+echo "            \"DeploymentSpecificationsDirectory\":\"$HOME/repos/djinn_config/deployment_specifications/\"," >> $HOME/.djinn
+echo "            \"DeploymentGroupSpecificationsDirectory\":\"$HOME/repos/djinn_config/deployment_group_specifications/\"," >> $HOME/.djinn
 echo "        }" >> $HOME/.djinn
 echo "    ]" >> $HOME/.djinn
 echo "}" >> $HOME/.djinn

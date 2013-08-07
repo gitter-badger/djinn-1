@@ -11,7 +11,7 @@ namespace Sungiant.Djinn
 		: Action
 	{
 		public Rsync(String description)
-			: base(ActionType.Rsync, description)
+			: base(description)
 		{
 			Delete = true;
 			Verbose = true;
@@ -52,7 +52,7 @@ namespace Sungiant.Djinn
 				}
 				else if( SourceContext == ActionContext.Local )
 				{
-					return DjinnConfiguration.Instance.ActiveWorkgroup.SpecFileDirectory + Source;
+					return DjinnConfiguration.Instance.ActiveWorkgroup.RepoDirectory + Source;
 				}
 				else throw new NotSupportedException();
 			}
@@ -70,7 +70,7 @@ namespace Sungiant.Djinn
 					return Destination;
 				else if( DestinationContext == ActionContext.Local )
 				{
-					return DjinnConfiguration.Instance.ActiveWorkgroup.SpecFileDirectory + Destination;
+					return DjinnConfiguration.Instance.ActiveWorkgroup.RepoDirectory + Destination;
 				}
 				else throw new NotSupportedException();
 			}

@@ -184,14 +184,18 @@ namespace Sungiant.Cloud.Aws
 			{
 				while (true)
 				{
-					Console.Write("\rQuerying port 22 of {0}", dns);
+					Console.Write("\r====> Querying port 22 of {0}", dns);
 					
 					var output = new List<String> ();
 
 					ProcessHelper.Run("nc", "-zv " + dns + " 22", (x) => output.Add(x));
 
-					if (output[0].Contains("succeeded"))
+					if (output.Count > 0 && output[1].Contains("succeeded"))
+					{
 						break;
+					}
+
+					Thread.Sleep (1000);
 				}
 			}
 			

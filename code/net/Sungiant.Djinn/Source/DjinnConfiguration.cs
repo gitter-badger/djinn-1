@@ -18,14 +18,10 @@ namespace Sungiant.Djinn
 
 		public class Workgroup
 		{
-
-			public String SpecFilePath { get; set; }
-
-			public String SpecFileDirectory
-			{ 
-				get { return SpecFilePath.Replace (Path.GetFileName (SpecFilePath), ""); } 
-			}
-
+			public String RepoDirectory { get; set; }
+			public String MachineBlueprintSpecificationsDirectory { get; set; }
+			public String DeploymentSpecificationsDirectory { get; set; }
+			public String DeploymentGroupSpecificationsDirectory { get; set; }
 		}
 
 		public List<Workgroup> Workgroups { get; set; }
@@ -39,7 +35,6 @@ namespace Sungiant.Djinn
 				return Workgroups[ActiveWorkgroupIndex];
 			}
 		}
-
 
 		static readonly String DjinnConfigurationFilePath;
 

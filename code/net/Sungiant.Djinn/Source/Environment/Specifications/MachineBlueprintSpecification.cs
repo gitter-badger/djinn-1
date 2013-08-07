@@ -5,9 +5,9 @@ namespace Sungiant.Djinn
 {
 	public class MachineBlueprintSpecification
 	{
-		public String MachineBlueprintId { get; set; }
-
 		public String Description { get; set; }
+
+		public String MachineBlueprintId { get; set; }
 
 		public List<Int32> OpenPorts { get; set; }
 

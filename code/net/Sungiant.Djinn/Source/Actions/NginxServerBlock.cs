@@ -9,6 +9,22 @@ using System.IO;
 
 namespace Sungiant.Djinn
 {
+	public class ReturnLocationBlock
+		: NginxLocationBlock
+	{
+		public String Return { get; set; }
+
+		public override String[] GetConfig()
+		{
+			return new String[]
+			{
+				"location " + Location + " {",
+				Return == null ? string.Empty : "  return  " + Return + ";",
+				"}",
+			};
+		}
+	}
+
 	public class StaticLocationBlock
 		: NginxLocationBlock
 	{
@@ -17,6 +33,8 @@ namespace Sungiant.Djinn
 		public String Index { get; set; }
 
 		public String TryFiles { get; set; }
+
+		public String Rewrite { get; set; }
 
 		public override String[] GetConfig()
 		{
@@ -36,7 +54,7 @@ namespace Sungiant.Djinn
 		: NginxLocationBlock
 	{
 		public String ProxyPass { get; set; }
-
+		public String Rewrite { get; set; }
 
 		public override String[] GetConfig()
 		{
@@ -55,28 +73,38 @@ namespace Sungiant.Djinn
 	public abstract class NginxLocationBlock
 	{
 		public String Location { get; set; }
-		
-		public String Rewrite { get; set; }
 
 		public abstract String[] GetConfig();
 	}
 
 
+	public class SslConfig
+	{
+		public String Certificate { get; set; }
+		public String CertificateKey { get; set; }
+	}
+
 	public class NginxServerBlock
 		: Action
 	{
 		public NginxServerBlock(String description) 
-			: base(ActionType.NginxServerBlock, description)
+			: base(description)
 		{
 		}
 
 		public String Name { get; set; }
+
+		public String Listen { get; set; }
 		
 		public List<String> VirtualHosts { get; set; }
 
 		public List<String> AllowedEndpoints { get; set; }
 
 		public List<NginxLocationBlock> Locations { get; set; }
+
+		public SslConfig SslConfig { get; set; }
+
+		public String Return { get; set; }
 
 		// todo, ssl and certs
 		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
@@ -90,8 +118,25 @@ namespace Sungiant.Djinn
 			var nginxScript = new List<string>();
 
 			nginxScript.Add( "server {" );
-			nginxScript.Add( "  listen 80;" );
-			nginxScript.Add( "  server_name " + VirtualHosts.Join(" ") + ";" );
+
+			if (string.IsNullOrEmpty(Listen))
+			{
+				nginxScript.Add ("  listen 80;");
+			}
+			else
+			{
+				nginxScript.Add ("  listen " + Listen + ";");
+			}
+
+			if( VirtualHosts != null )
+				nginxScript.Add( "  server_name " + VirtualHosts.Join(" ") + ";" );
+
+			if (SslConfig != null)
+			{
+				nginxScript.Add ("  ssl on;");
+				nginxScript.Add (string.Format("  ssl_certificate {0};", this.SslConfig.Certificate));
+				nginxScript.Add (string.Format("  ssl_certificate_key {0};", this.SslConfig.CertificateKey));
+			}
 
 			if( AllowedEndpoints != null )
 			{
@@ -103,15 +148,23 @@ namespace Sungiant.Djinn
 				nginxScript.Add( "  deny all;" );
 			}
 
-			foreach( var location in Locations )
+			if (!string.IsNullOrEmpty (Return))
 			{
-				var locBlock = location
-					.GetConfig()
-					.Where(x => !string.IsNullOrEmpty(x));
+				nginxScript.Add( "  return " + Return + ";" );
+			}
 
-				foreach( var line in locBlock )
+			if (Locations != null)
+			{
+				foreach (var location in Locations)
 				{
-					nginxScript.Add( "  " + line );
+					var locBlock = location
+					.GetConfig ()
+					.Where (x => !string.IsNullOrEmpty (x));
+
+					foreach (var line in locBlock)
+					{
+						nginxScript.Add ("  " + line);
+					}
 				}
 			}
 

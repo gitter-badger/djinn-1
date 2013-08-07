@@ -7,6 +7,7 @@ using ServiceStack.Text;
 using Sungiant.Core;
 using System.Text;
 using Sungiant.Cloud;
+using System.Threading;
 
 namespace Sungiant.Djinn
 {
@@ -47,6 +48,15 @@ namespace Sungiant.Djinn
 
         public static void Main(string[] args)
         {
+			
+			Console.WriteLine ("________        ____.___ _______    _______   ");
+			Console.WriteLine ("\\______ \\      |    |   |\\      \\   \\      \\");
+			Console.WriteLine (" |    |  \\     |    |   |/   |   \\  /   |   \\ ");
+			Console.WriteLine (" |    `   \\/\\__|    |   /    |    \\/    |    \\");
+			Console.WriteLine ("/_______  /\\________|___\\____|__  /\\____|__  /");
+			Console.WriteLine ("        \\/                      \\/         \\/ ");
+			Console.WriteLine ("Djinn v0.2.0");
+
 			// loads up djinn's configuration file
 			var configuration = DjinnConfiguration.Load ();
 
@@ -54,10 +64,33 @@ namespace Sungiant.Djinn
 
 
 			InitiliseCloudProvider();
-		
-			String xml = File.ReadAllText(DjinnConfiguration.Instance.ActiveWorkgroup.SpecFilePath);
 
-			var environmentSpecification = xml.FromXml<DjinnEnvironmentSpecification>();
+			var machine_blueprint_specs = 
+				Directory
+					.GetFiles (configuration.ActiveWorkgroup.MachineBlueprintSpecificationsDirectory)
+					.Select(x => x.ReadAllText())
+					.Select(x => x.FromXml<MachineBlueprintSpecification>())
+					.ToList();
+
+			var deployment_specs = 
+				Directory
+					.GetFiles (configuration.ActiveWorkgroup.DeploymentSpecificationsDirectory)
+					.Select(x => x.ReadAllText())
+					.Select(x => x.FromXml<DeploymentSpecification>())
+					.ToList();
+
+			var deployment_group_specs = 
+				Directory
+					.GetFiles (configuration.ActiveWorkgroup.DeploymentGroupSpecificationsDirectory)
+					.Select(x => x.ReadAllText())
+					.Select(x => x.FromXml<DeploymentGroupSpecification>())
+					.ToList();
+		
+			var environmentSpecification = new DjinnEnvironmentSpecification () {
+				MachineBlueprintSpecifications = machine_blueprint_specs,
+				DeploymentSpecifications = deployment_specs,
+				DeploymentGroupSpecifications = deployment_group_specs,
+			};
 
 			DjinnEnvironment = new DjinnEnvironment(environmentSpecification);
 
@@ -70,6 +103,7 @@ namespace Sungiant.Djinn
 			}
 
 			djinnTask.Run();
+			Console.WriteLine ("Completed " + djinnTask.GetType().ToString ());
         }
 
 		static void InitiliseCloudProvider()

@@ -19,7 +19,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
-    <Commandlineparameters>ssh test-deployment dev-box</Commandlineparameters>
+    <Commandlineparameters>deploy test-deployment dev-box default-server</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -39,7 +39,6 @@
     <Compile Include="Source\DjinnConfiguration.cs" />
     <Compile Include="Source\ActionContext.cs" />
     <Compile Include="Source\Action.cs" />
-    <Compile Include="Source\ActionType.cs" />
     <Compile Include="Source\Actions\XBuild.cs" />
     <Compile Include="Source\Actions\MdToolBuild.cs" />
     <Compile Include="Source\Actions\Command.cs" />

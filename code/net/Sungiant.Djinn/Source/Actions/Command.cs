@@ -7,7 +7,7 @@ namespace Sungiant.Djinn
 	public class Command
 		: Action
 	{
-		public Command(String description) : base(ActionType.Command, description)
+		public Command(String description) : base(description)
 		{
 			Arguments = string.Empty;
 		}
