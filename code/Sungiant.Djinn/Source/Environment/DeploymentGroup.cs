@@ -2,7 +2,6 @@ using System;
 
 namespace Sungiant.Djinn
 {
-	
 	public class DeploymentGroup
 	{
 		DeploymentGroupSpecification spec;
