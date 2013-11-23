@@ -1,0 +1,2 @@
+#!/bin/sh
+mono --debug /usr/local/bin/djinn_app/Sungiant.Djinn.exe $@

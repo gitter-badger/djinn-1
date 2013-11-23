@@ -1,10 +1,16 @@
 #!/bin/sh
-cd ../code/net/Sungiant.Djinn/
-xbuild Sungiant.Djinn\ \(net40\).csproj /p:Configuration=Debug
+cd ../source/Sungiant.Djinn/
+xbuild Sungiant.Djinn.csproj /p:Configuration=Debug /verbosity:quiet /clp:Summary /nologo
+
+
+rm -r -f /usr/local/bin/djinn_app
+mkdir /usr/local/bin/djinn_app
+
 cp djinn /usr/local/bin/djinn
 chmod +x /usr/local/bin/djinn
-cp bin/Debug/Sungiant.Djinn.exe /usr/local/bin/Sungiant.Djinn.exe
-cp bin/Debug/*.dll /usr/local/bin/
+
+cp bin/Debug/Sungiant.Djinn.exe /usr/local/bin/djinn_app/Sungiant.Djinn.exe
+cp bin/Debug/*.dll /usr/local/bin/djinn_app/
 
 TIME="$(date +%s)"
 DEPLOYMENTS_DIR="`pwd`"

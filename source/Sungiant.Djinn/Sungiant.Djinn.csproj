@@ -19,7 +19,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <Commandlineparameters>deploy test-deployment dev-box default-server</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -78,10 +77,6 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sungiant.Cloud\Sungiant.Cloud %28net40%29.csproj">
-      <Project>{39484047-9CD3-48FE-8D58-220ED4D4106D}</Project>
-      <Name>Sungiant.Cloud (net40)</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\submodules\ServiceStack.Text\src\ServiceStack.Text.Net40\ServiceStack.Text.Net40.csproj">
       <Project>{15BF26C8-92F8-445D-8FFC-7882A519B67D}</Project>
       <Name>ServiceStack.Text.Net40</Name>
@@ -93,6 +88,10 @@
     <ProjectReference Include="..\..\submodules\core\build_examples\Sungiant.Core\Sungiant.Core %28net40%29.csproj">
       <Project>{043738D8-7F8A-423C-BE25-F11A08F77F35}</Project>
       <Name>Sungiant.Core (net40)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sungiant.Cloud\Sungiant.Cloud.csproj">
+      <Project>{39484047-9CD3-48FE-8D58-220ED4D4106D}</Project>
+      <Name>Sungiant.Cloud</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
