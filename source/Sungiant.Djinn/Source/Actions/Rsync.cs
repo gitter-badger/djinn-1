@@ -103,7 +103,7 @@ namespace Sungiant.Djinn
 			if( SourceContext == ActionContext.Local && DestinationContext == ActionContext.Local )
 			{
 				ProcessHelper.Run(
-					"rsync",
+					"rsync " +
 					Arguments.Join(" ") + " " + actualSource + " " + actualDestination, 
 					Console.WriteLine
 					);
@@ -130,9 +130,9 @@ namespace Sungiant.Djinn
 				foreach( var endpoint in cloudDeployment.Endpoints )
 				{
 					ProcessHelper.Run(
-						"rsync",
 						new string[]
 						{
+							"rsync",
 							Arguments.Join(" "),
 							string.Format("--rsh \"ssh -o StrictHostKeyChecking=no -i {0}\"", cloudProvider.PrivateKeyPath),
 							actualSource,
@@ -148,9 +148,9 @@ namespace Sungiant.Djinn
 				foreach( var endpoint in cloudDeployment.Endpoints )
 				{
 					ProcessHelper.Run(
-						"rsync",
 						new string[]
 						{
+							"rsync",
 							Arguments.Join(" "),
 							string.Format("--rsh \"ssh -o StrictHostKeyChecking=no -i {0}\"", cloudProvider.PrivateKeyPath),
 							string.Format("{0}@{1}:{2}", cloudProvider.User, endpoint, actualSource),

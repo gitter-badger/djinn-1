@@ -107,9 +107,9 @@ namespace Sungiant.Cloud.Aws
 				;
 
 				Int32 exitCode = ProcessHelper.Run (
-					"ssh", 
 					new String[]
 					{
+						"ssh",
 						"-o StrictHostKeyChecking=no",
 						"-i", 
 						PrivateKeyPath,

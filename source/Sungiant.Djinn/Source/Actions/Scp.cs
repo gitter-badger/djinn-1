@@ -48,9 +48,9 @@ namespace Sungiant.Djinn
 			if( SourceContext == ActionContext.Local && DestinationContext == ActionContext.Local )
 			{
 				ProcessHelper.Run(
-					"scp",
 					new string[]
 					{
+						"scp",
 						Arguments.Join(" "),
 						SourcePath,
 						DestinationPath
@@ -64,9 +64,9 @@ namespace Sungiant.Djinn
 			{
 				cloudProvider.RunCommand(
 					cloudDeployment,
-					"scp " +
 					new string[]
 					{
+						"scp",
 						Arguments.Join(" "),
 						SourcePath,
 						DestinationPath
@@ -77,14 +77,12 @@ namespace Sungiant.Djinn
 			
 			if( SourceContext == ActionContext.Local && DestinationContext == ActionContext.Remote )
 			{
-				
-				
 				foreach( var endpoint in cloudDeployment.Endpoints )
 				{
 					ProcessHelper.Run(
-						"scp",
 						new string[]
 						{
+							"scp",
 							Arguments.Join(" "),
 							"-o StrictHostKeyChecking=no",
 							string.Format("-i {0}", cloudProvider.PrivateKeyPath),
@@ -102,9 +100,9 @@ namespace Sungiant.Djinn
 				foreach( var endpoint in cloudDeployment.Endpoints )
 				{
 					ProcessHelper.Run(
-						"scp",
 						new string[]
 						{
+							"scp",
 							Arguments.Join(" "),
 							"-o StrictHostKeyChecking=no",
 							string.Format("-i {0}", cloudProvider.PrivateKeyPath),

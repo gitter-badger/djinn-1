@@ -46,7 +46,7 @@ namespace Sungiant.Djinn
 
 			switch(Context)
 			{
-				case ActionContext.Local: ProcessHelper.Run (command, arguments, Console.WriteLine); break;
+				case ActionContext.Local: ProcessHelper.Run (cmd, Console.WriteLine); break;
 				case ActionContext.Remote: cloudProvider.RunCommand(cloudDeployment, cmd); break;
 			}
 

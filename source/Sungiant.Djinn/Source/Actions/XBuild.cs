@@ -25,8 +25,6 @@ namespace Sungiant.Djinn
 		{
 			LogPerform();
 
-			var command = "xbuild";
-
 			String blueprintsDirectory = Path.Combine (localContext, "blueprints");
 			var projFullPath = Path.Combine (blueprintsDirectory, ProjectPath);
 
@@ -35,19 +33,18 @@ namespace Sungiant.Djinn
 				Verbosity = "minimal";
 			}
 
-			var arguments = new string[]
+			var command = new string[]
 			{
+				"xbuild",
 				"\"" + projFullPath + "\"",
 				string.Format("/p:Configuration={0}", Configuration),
 				string.Format("/verbosity:{0}", Verbosity)
 			}.Join(" ");
 
-			String cmd = command + " " + arguments;
-
 			switch(Context)
 			{
-				case ActionContext.Local: ProcessHelper.Run(command, arguments, Console.WriteLine); break;
-				case ActionContext.Remote: cloudProvider.RunCommand(cloudDeployment, cmd); break;
+				case ActionContext.Local: ProcessHelper.Run(command, Console.WriteLine); break;
+				case ActionContext.Remote: cloudProvider.RunCommand(cloudDeployment, command); break;
 			}
 		}
 	}

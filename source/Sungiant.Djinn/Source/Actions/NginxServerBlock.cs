@@ -178,9 +178,9 @@ namespace Sungiant.Djinn
 			foreach( var endpoint in cloudDeployment.Endpoints )
 			{
 				ProcessHelper.Run(
-					"rsync",
 					new String[]
 					{
+						"rsync",
 						"-v",
 						String.Format("--rsh \"ssh -o StrictHostKeyChecking=no -i {0}\"", cloudProvider.PrivateKeyPath),
 						tempNginxConfigFile,

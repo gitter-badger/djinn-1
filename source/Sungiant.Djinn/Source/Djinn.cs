@@ -100,7 +100,6 @@ namespace Sungiant.Djinn
 
 			Console.WriteLine ("Active Workgroup: " + DjinnConfiguration.Instance.ActiveWorkgroup.Name);
 
-
 			var environmentSpecification = new DjinnEnvironmentSetupData ();
 
 			foreach (var projectConfig in DjinnConfiguration.Instance.ActiveWorkgroup.ProjectConfigurations)

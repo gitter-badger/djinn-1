@@ -46,9 +46,9 @@ namespace Sungiant.Djinn
 			foreach( var endpoint in cloudDeployment.Endpoints )
 			{
 				ProcessHelper.Run(
-					"rsync",
 					new string[]
 					{
+						"rsync",
 						"-v",
 						string.Format("--rsh \"ssh -o StrictHostKeyChecking=no -i {0}\"", cloudProvider.PrivateKeyPath),
 						tempUpstartJobPath,

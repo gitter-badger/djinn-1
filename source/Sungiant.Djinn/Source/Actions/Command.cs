@@ -24,8 +24,21 @@ namespace Sungiant.Djinn
 
 			switch(ActionContext)
 			{
-				case ActionContext.Local: ProcessHelper.Run(Value, "", Console.WriteLine); break;
-				case ActionContext.Remote: cloudProvider.RunCommand(cloudDeployment, Value, IgnoreFailure); break;
+				case ActionContext.Local: 
+					{
+						Int32 exitCode = ProcessHelper.Run (Value, Console.WriteLine);
+
+						if (exitCode != 0 && !IgnoreFailure)
+						{
+							throw new Exception ("Exited with code " + exitCode);
+						}
+					}
+					break;
+				case ActionContext.Remote: 
+					{
+						cloudProvider.RunCommand (cloudDeployment, Value, IgnoreFailure); 
+					}
+					break;
 			}
 		}
 	}

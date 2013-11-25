@@ -20,8 +20,7 @@ namespace Sungiant.Djinn
 
 			cloudProvider.RunCommand(
 				cloudDeployment, 
-				"sudo apt-get " +
-				"-q -y install " + PackageNames.Join(" ")
+				"sudo apt-get -q -y install " + PackageNames.Join(" ")
 			);
 		}
 	}

@@ -29,9 +29,9 @@ namespace Sungiant.Djinn
 				}
 			
 				Int32 exitCode = ProcessHelper.Run(
-					"ssh", 
 					new string[]
 					{
+						"ssh",
 						"-i", 
 						CloudProvider.PrivateKeyPath,
 						CloudProvider.User + "@" + cd.Endpoints[machineIndex]

@@ -188,7 +188,9 @@ namespace Sungiant.Cloud.Aws
 					
 					var output = new List<String> ();
 
-					ProcessHelper.Run("nc", "-zv " + dns + " 22", (x) => output.Add(x));
+					ProcessHelper.Run (
+						"nc -zv " + dns + " 22", 
+						output.Add);
 
 					if (output.Count > 0 && output[1].Contains("succeeded"))
 					{
