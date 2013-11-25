@@ -22,7 +22,7 @@ namespace Sungiant.Djinn
 			
 			if (cd != null)
 			{
-				foreach( var actionGroup in Deployment.MachineBlueprint.Configure )
+				foreach( var actionGroup in Deployment.Blueprint.Configure )
 				{
 					if(SpecificActionGroup != null && SpecificActionGroup != actionGroup.Name)
 						continue;
@@ -31,7 +31,7 @@ namespace Sungiant.Djinn
 
 					foreach( var action in actionGroup.Actions )
 					{
-						action.Perform(CloudProvider, cd);
+						action.Perform(CloudProvider, cd, this.Deployment.LocalContext);
 					}
 				}
 			}

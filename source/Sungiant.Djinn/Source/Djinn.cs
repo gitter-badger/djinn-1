@@ -56,7 +56,7 @@ namespace Sungiant.Djinn
 
 		static OptionSet OptionSet;
 
-		const string Version = "0.2.0";
+		const string Version = "0.2.1";
 
 		static Djinn()
 		{
@@ -94,43 +94,46 @@ namespace Sungiant.Djinn
 			Console.WriteLine ("Djinn v" + Version);
 
 			// loads up djinn's configuration file
-			var configuration = DjinnConfiguration.Load ();
-
-			DjinnConfiguration.Create(configuration);
-
+			DjinnConfiguration.Instance.Load ();
 
 			InitiliseCloudProvider();
 
-			var machine_blueprint_specs = 
-				Directory
-					.GetFiles (configuration.ActiveWorkgroup.MachineBlueprintSpecificationsDirectory)
-					.Select(x => x.ReadAllText())
-					.Select(x => x.FromXml<MachineBlueprintSpecification>())
-					.ToList();
+			Console.WriteLine ("Active Workgroup: " + DjinnConfiguration.Instance.ActiveWorkgroup.Name);
 
-			var deployment_specs = 
-				Directory
-					.GetFiles (configuration.ActiveWorkgroup.DeploymentSpecificationsDirectory)
-					.Select(x => x.ReadAllText())
-					.Select(x => x.FromXml<DeploymentSpecification>())
-					.ToList();
 
-			var deployment_group_specs = 
-				Directory
-					.GetFiles (configuration.ActiveWorkgroup.DeploymentGroupSpecificationsDirectory)
-					.Select(x => x.ReadAllText())
-					.Select(x => x.FromXml<DeploymentGroupSpecification>())
-					.ToList();
-		
-			var environmentSpecification = new DjinnEnvironmentSpecification () {
-				MachineBlueprintSpecifications = machine_blueprint_specs,
-				DeploymentSpecifications = deployment_specs,
-				DeploymentGroupSpecifications = deployment_group_specs,
-			};
+			var environmentSpecification = new DjinnEnvironmentSetupData ();
+
+			foreach (var projectConfig in DjinnConfiguration.Instance.ActiveWorkgroup.ProjectConfigurations)
+			{
+				var blueprint_specs = 
+					Directory.GetFiles(projectConfig.BlueprintsDirectory)
+						.Select(x => x.ReadAllText())
+						.Select(x => x.FromXml<BlueprintSpecification>())
+						.ToList();
+
+				var deployment_specs = 
+					Directory.GetFiles(projectConfig.DeploymentsDirectory)
+						.Select(x => x.ReadAllText())
+						.Select(x => x.FromXml<DeploymentSpecification>())
+						.ToList();
+
+				var zone_specs = 
+					Directory.GetFiles(projectConfig.ZonesDirectory)
+						.Select(x => x.ReadAllText())
+						.Select(x => x.FromXml<ZoneSpecification>())
+						.ToList();
+
+				environmentSpecification.AddProject (
+					projectConfig.DjinnDirectory,
+					blueprint_specs,
+					deployment_specs,
+					zone_specs
+				);
+			}
 
 			DjinnEnvironment = new DjinnEnvironment(environmentSpecification);
 
-			var djinnTask = ParseArguments(args);
+			DjinnTask djinnTask = ParseArguments(args);
 
 			if (ShowHelp || djinnTask == null) 
 			{
@@ -144,19 +147,19 @@ namespace Sungiant.Djinn
 
 		static void InitiliseCloudProvider()
 		{
-			if (DjinnConfiguration.Instance.AwsCredentials != null && DjinnConfiguration.Instance.AzureCredentials != null)
+			if (DjinnConfiguration.Instance.DjinnAwsFile != null && DjinnConfiguration.Instance.DjinnAzureFile != null)
 			{
 				throw new NotImplementedException("todo: do you want to use azure or aws?");
 			}
 			
-			if (DjinnConfiguration.Instance.AwsCredentials != null)
+			if (DjinnConfiguration.Instance.DjinnAwsFile != null)
 			{
-				CloudProvider = new Sungiant.Cloud.Aws.Aws(DjinnConfiguration.Instance.AwsCredentials);
+				CloudProvider = new Sungiant.Cloud.Aws.Aws(DjinnConfiguration.Instance.DjinnAwsFile);
 			}
 			
-			if (DjinnConfiguration.Instance.AzureCredentials != null)
+			if (DjinnConfiguration.Instance.DjinnAzureFile != null)
 			{
-				CloudProvider = new Sungiant.Cloud.Azure.Azure(DjinnConfiguration.Instance.AzureCredentials);
+				CloudProvider = new Sungiant.Cloud.Azure.Azure(DjinnConfiguration.Instance.DjinnAzureFile);
 			}
 
 		}
@@ -217,7 +220,7 @@ namespace Sungiant.Djinn
 
 			// make sure the deployment we want to talk to exists
 			var deployment = DjinnEnvironment.Deployments
-				.Find (x => (x.DeploymentGroup.Id == deploymentGroupId && x.MachineBlueprint.Id == machineBlueprintId));
+				.Find (x => (x.DeploymentGroup.Id == deploymentGroupId && x.Blueprint.Id == machineBlueprintId));
 
 			if (deployment == null)
 			{
@@ -256,7 +259,7 @@ namespace Sungiant.Djinn
 				
 				//var endpoints = CloudProvider.GetEndpoints(
 				//	deployment.DeploymentGroup.Id,
-				//	deployment.MachineBlueprint.Id);
+				//	deployment.Blueprint.Id);
 				
 				//if( endpoints.Count != deployment.HorizontalScale )
 				//{

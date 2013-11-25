@@ -5,24 +5,27 @@ using System.Linq;
 
 namespace Sungiant.Djinn
 {
-	public class MachineBlueprint
+	public class Blueprint
 	{
-		MachineBlueprintSpecification spec;
+		/// <summary>
+		/// The spec file.
+		/// </summary>
+		readonly BlueprintSpecification spec;
 		
-		public MachineBlueprint(MachineBlueprintSpecification spec)
+		public Blueprint(BlueprintSpecification spec)
 		{
 			this.spec = spec;
 			this.Security = new CloudSecurityGroup()
 			{
-				Name = spec.MachineBlueprintId,
+				Name = spec.BlueprintId,
 				Description = spec.Description,
 				Rules = spec.OpenPorts
 					.Select(x => new CloudSecurityGroupRule() { Mode = CloudSecurityGroupRule.TransportMode.TCP, Port = x })
 					.ToList()
 			};
 		}
-		
-		public String Id { get { return spec.MachineBlueprintId; } }
+
+		public String Id { get { return spec.BlueprintId; } }
 		
 		public String Description { get { return spec.Description; } }
 		

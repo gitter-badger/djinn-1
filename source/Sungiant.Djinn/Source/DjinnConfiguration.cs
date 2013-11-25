@@ -6,72 +6,133 @@ using Sungiant.Core;
 
 namespace Sungiant.Djinn
 {
-	public class DjinnConfiguration
-		: Singleton<DjinnConfiguration>
-	{	
-
+	/// <summary>
+	/// 
+	/// </summary>
+	public class DjinnInstallationFile
+	{
+		/// <summary>
+		/// When was Djinn last installed.  (todo: this should live in a different file)
+		/// </summary>
 		public Int32 InstallTime { get; set; }
-		public DateTime InstallDateTime { get { return DateTimeHelper.FromUnixTime(InstallTime); } }
+	}
 
-		public Sungiant.Cloud.Aws.AwsCredentials AwsCredentials { get; private set; }
-		public Sungiant.Cloud.Azure.AzureCredentials AzureCredentials { get; private set; }
+	/// <summary>
+	/// 
+	/// </summary>
+	public class DjinnSettingsFile
+	{
+		public int ActiveWorkgroupIndex { get; set; }
+	}
 
+	/// <summary>
+	/// 
+	/// </summary>
+	public class DjinnFile
+	{
+		/// <summary>
+		/// 
+		/// </summary>
+		public class ProjectConfiguration
+		{
+			public String Name { get; set; }
+			public String DjinnDirectory { get; set; }
+
+			public String BlueprintsDirectory { get { return Path.Combine (DjinnDirectory, "blueprints"); } }
+			public String DeploymentsDirectory { get { return Path.Combine (DjinnDirectory, "deployments"); } }
+			public String ZonesDirectory { get { return Path.Combine (DjinnDirectory, "zones"); } }
+		}
+
+		/// <summary>
+		/// A workgroup represents a group of 
+		/// </summary>
 		public class Workgroup
 		{
-			public String RepoDirectory { get; set; }
-			public String MachineBlueprintSpecificationsDirectory { get; set; }
-			public String DeploymentSpecificationsDirectory { get; set; }
-			public String DeploymentGroupSpecificationsDirectory { get; set; }
+			public String Name { get; set; }
+			public List<ProjectConfiguration> ProjectConfigurations { get; set; }
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public List<Workgroup> Workgroups { get; set; }
+	}
 
-		public int ActiveWorkgroupIndex { get; set; }
+	/// <summary>
+	/// Represents all of the Djinn configuration file, updated at load time.
+	/// </summary>
+	public class DjinnConfiguration
+		: Singleton<DjinnConfiguration>
+	{
+		static readonly String DjinnConfigurationFilePath;
 
-		public Workgroup ActiveWorkgroup
+		public DjinnFile DjinnFile { get; private set; }
+		public DjinnInstallationFile DjinnInstallationFile { get; private set; }
+		public DjinnSettingsFile DjinnSettingsFile { get; private set; }
+
+		public Sungiant.Cloud.Aws.AwsCredentials DjinnAwsFile { get; private set; }
+		public Sungiant.Cloud.Azure.AzureCredentials DjinnAzureFile { get; private set; }
+
+
+		public DjinnFile.Workgroup ActiveWorkgroup
 		{
-			get
-			{
-				return Workgroups[ActiveWorkgroupIndex];
-			}
+			get { return DjinnFile.Workgroups[DjinnSettingsFile.ActiveWorkgroupIndex]; }
 		}
 
-		static readonly String DjinnConfigurationFilePath;
+		public DateTime InstallDateTime
+		{ 
+			get { return DateTimeHelper.FromUnixTime(DjinnInstallationFile.InstallTime); }
+		}
 
 		static DjinnConfiguration()
 		{
 			DjinnConfigurationFilePath = Environment.GetEnvironmentVariable("HOME") + "/.djinn";
 		}
 
-		public static DjinnConfiguration Load()
+		public void Load()
 		{
 			if (File.Exists (DjinnConfigurationFilePath))
 			{
-				String content = File.ReadAllText (DjinnConfigurationFilePath);
-
-				DjinnConfiguration result = content.FromJson<DjinnConfiguration> ();
+				DjinnFile = 
+					File.ReadAllText (DjinnConfigurationFilePath)
+						.FromJson<DjinnFile> ();
 
 				if (File.Exists (DjinnConfigurationFilePath + ".aws"))
 				{
-					result.AwsCredentials = 
+					DjinnConfiguration.Instance.DjinnAwsFile = 
 						File.ReadAllText (DjinnConfigurationFilePath + ".aws")
-							.FromJson<Sungiant.Cloud.Aws.AwsCredentials> ();	
+							.FromJson<Sungiant.Cloud.Aws.AwsCredentials> ();
 				}
-				
+
 				if (File.Exists (DjinnConfigurationFilePath + ".azure"))
 				{
-					result.AzureCredentials = 
+					DjinnConfiguration.Instance.DjinnAzureFile = 
 						File.ReadAllText (DjinnConfigurationFilePath + ".azure")
-							.FromJson<Sungiant.Cloud.Azure.AzureCredentials> ();	
-					
+							.FromJson<Sungiant.Cloud.Azure.AzureCredentials> ();
 				}
 
-				if( result.AwsCredentials == null && result.AzureCredentials == null )
+				if (File.Exists (DjinnConfigurationFilePath + ".installation"))
 				{
-					throw new Exception("You must add either ~/.djinn.aws or ~/.djinn.azure with appriopriate credentials");
+					DjinnConfiguration.Instance.DjinnInstallationFile = 
+						File.ReadAllText (DjinnConfigurationFilePath + ".installation")
+							.FromJson<DjinnInstallationFile> ();
 				}
 
-				return result;
+				if (File.Exists (DjinnConfigurationFilePath + ".settings"))
+				{
+					DjinnConfiguration.Instance.DjinnSettingsFile = 
+						File.ReadAllText (DjinnConfigurationFilePath + ".settings")
+							.FromJson<DjinnSettingsFile> ();
+				}
+
+				if( DjinnAwsFile == null &&
+					DjinnAzureFile == null &&
+					DjinnInstallationFile == null &&
+					DjinnSettingsFile == null )
+				{
+					throw new Exception(
+						"You must add either ~/.djinn.aws or ~/.djinn.azure with appriopriate credentials");
+				}
 			}
 			else
 			{

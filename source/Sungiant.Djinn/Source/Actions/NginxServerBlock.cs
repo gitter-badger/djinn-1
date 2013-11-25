@@ -107,7 +107,7 @@ namespace Sungiant.Djinn
 		public String Return { get; set; }
 
 		// todo, ssl and certs
-		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
+		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment, String localContext)
 		{
 			LogPerform();
 			

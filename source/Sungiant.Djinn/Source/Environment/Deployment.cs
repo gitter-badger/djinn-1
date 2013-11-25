@@ -8,15 +8,22 @@ namespace Sungiant.Djinn
 	public class Deployment
 	{
 		DeploymentSpecification Spec { get; set; }
+
+		/// <summary>
+		/// The directory from which local commands in this blueprint are relative to.
+		/// </summary>
+		readonly String localContext;
 		
 		public Deployment(
 			DeploymentSpecification spec, 
-			Dictionary<String, DeploymentGroup> deploymentGroups,
-			Dictionary<String, MachineBlueprint> machineBlueprints)
+			Dictionary<String, Zone> deploymentGroups,
+			Dictionary<String, Blueprint> machineBlueprints,
+			String localContext)
 		{
 			this.Spec = spec;
-			this.DeploymentGroup = deploymentGroups[spec.DeploymentGroupId];
-			this.MachineBlueprint = machineBlueprints[spec.MachineBlueprintId];
+			this.localContext = localContext;
+			this.DeploymentGroup = deploymentGroups[spec.ZoneId];
+			this.Blueprint = machineBlueprints[spec.BlueprintId];
 
 			Identity = new CloudDeploymentIdentity()
 			{
@@ -25,7 +32,7 @@ namespace Sungiant.Djinn
 					new CloudDeploymentIdentifierTag()
 					{
 						Name = "DeploymentId",
-						Value = Id,
+						Value = Id
 					},
 				},
 				IdentiferTagGroups = new List<CloudDeploymentIdentifierTagGroup>()
@@ -36,15 +43,15 @@ namespace Sungiant.Djinn
 						{
 							new CloudDeploymentIdentifierTag()
 							{
-								Name = "DeploymentGroupId",
-								Value = DeploymentGroup.Id,
+								Name = "ZoneId",
+								Value = DeploymentGroup.Id
 							},
 							new CloudDeploymentIdentifierTag()
 							{
-								Name = "MachineBlueprintId",
-								Value = MachineBlueprint.Id,
-							},
-						},
+								Name = "BlueprintId",
+								Value = Blueprint.Id
+							}
+						}
 					}
 				},
 				InformationalTags = new List<CloudDeploymentIdentifierTag>()
@@ -57,27 +64,29 @@ namespace Sungiant.Djinn
 					new CloudDeploymentIdentifierTag()
 					{
 						Name = "MachineDescription",
-						Value = MachineBlueprint.Description
-					},
+						Value = Blueprint.Description
+					}
 				}
 			};
 		}
 		
-		public MachineBlueprint MachineBlueprint { get; private set; }
+		public Blueprint Blueprint { get; private set; }
 
-		public DeploymentGroup DeploymentGroup { get; private set; }
+		public Zone DeploymentGroup { get; private set; }
 
 		public CloudDeploymentIdentity Identity { get; private set; }
 
-		String Id { get { return DeploymentGroup.Id + " (" + MachineBlueprint.Id + ")"; } }
+		String Id { get { return DeploymentGroup.Id + " (" + Blueprint.Id + ")"; } }
 		
 		public Int32 HorizontalScale { get { return Spec.HorizontalScale; } }
 		
 		public Int32 VerticalScale { get { return Spec.VerticalScale; } }
+
+		public String LocalContext { get { return localContext; }}
 		
-		public override string ToString ()
+		public override String ToString ()
 		{
-			return string.Format ("[Deployment: MachineBlueprint={0}, DeploymentGroup={1}, Identity={2}, HorizontalScale={3}, VerticalScale={4}]", MachineBlueprint, DeploymentGroup, Identity, HorizontalScale, VerticalScale);
+			return String.Format ("[Deployment: Blueprint={0}, DeploymentGroup={1}, Identity={2}, HorizontalScale={3}, VerticalScale={4}]", Blueprint, DeploymentGroup, Identity, HorizontalScale, VerticalScale);
 		}
 	}
 }

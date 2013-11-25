@@ -42,38 +42,32 @@ namespace Sungiant.Djinn
 		public String Source { get; set; }
 
 
-		public String ActualSource
-		{ 
-			get
+		String GetActualSource(String blueprintsDirectory)
+		{
+			if( SourceContext == ActionContext.Remote )
 			{
-				if( SourceContext == ActionContext.Remote )
-				{
-					return Source;
-				}
-				else if( SourceContext == ActionContext.Local )
-				{
-					return DjinnConfiguration.Instance.ActiveWorkgroup.RepoDirectory + Source;
-				}
-				else throw new NotSupportedException();
+				return Source;
 			}
+			else if( SourceContext == ActionContext.Local )
+			{
+				return Path.Combine(blueprintsDirectory, Source);
+			}
+			else throw new NotSupportedException();
 		}
 
 		public ActionContext SourceContext { get; set; }
 
 		public String Destination { get; set; }
 
-		public String ActualDestination
-		{ 
-			get
+		String GetActualDestination(String blueprintsDirectory)
+		{
+			if( DestinationContext == ActionContext.Remote )
+				return Destination;
+			else if( DestinationContext == ActionContext.Local )
 			{
-				if( DestinationContext == ActionContext.Remote )
-					return Destination;
-				else if( DestinationContext == ActionContext.Local )
-				{
-					return DjinnConfiguration.Instance.ActiveWorkgroup.RepoDirectory + Destination;
-				}
-				else throw new NotSupportedException();
+				return Path.Combine(blueprintsDirectory, Destination);
 			}
+			else throw new NotSupportedException();
 		}
 
 		public ActionContext DestinationContext { get; set; }
@@ -96,15 +90,21 @@ namespace Sungiant.Djinn
 			}
 		}
 
-		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
+		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment, String localContext)
 		{
 			LogPerform();
+
+			String blueprintsDirectory = Path.Combine (localContext, "blueprints");
+
+			String actualSource = GetActualSource(blueprintsDirectory);
+			String actualDestination = GetActualDestination(blueprintsDirectory);
+
 
 			if( SourceContext == ActionContext.Local && DestinationContext == ActionContext.Local )
 			{
 				ProcessHelper.Run(
 					"rsync",
-					Arguments.Join(" ") + " " + ActualSource + " " + ActualDestination, 
+					Arguments.Join(" ") + " " + actualSource + " " + actualDestination, 
 					Console.WriteLine
 					);
 				return;
@@ -118,10 +118,9 @@ namespace Sungiant.Djinn
 					new string[]
 					{
 						Arguments.Join(" "),
-						ActualSource,
-						ActualDestination
-					}.Join(" ")
-				);
+						actualSource,
+						actualDestination
+					}.Join(" "));
 
 				return;
 			}
@@ -136,11 +135,10 @@ namespace Sungiant.Djinn
 						{
 							Arguments.Join(" "),
 							string.Format("--rsh \"ssh -o StrictHostKeyChecking=no -i {0}\"", cloudProvider.PrivateKeyPath),
-							ActualSource,
-							string.Format("{0}@{1}:{2}", cloudProvider.User, endpoint, ActualDestination)
+							actualSource,
+							string.Format("{0}@{1}:{2}", cloudProvider.User, endpoint, actualDestination)
 						}.Join(" "), 
-					Console.WriteLine
-					);
+						Console.WriteLine);
 				}
 				return;
 			}
@@ -155,11 +153,10 @@ namespace Sungiant.Djinn
 						{
 							Arguments.Join(" "),
 							string.Format("--rsh \"ssh -o StrictHostKeyChecking=no -i {0}\"", cloudProvider.PrivateKeyPath),
-							string.Format("{0}@{1}:{2}", cloudProvider.User, endpoint, ActualSource),
-							ActualDestination
+							string.Format("{0}@{1}:{2}", cloudProvider.User, endpoint, actualSource),
+							actualDestination
 						}.Join(" "),
-						Console.WriteLine
-					);
+						Console.WriteLine);
 				}
 				return;
 			}

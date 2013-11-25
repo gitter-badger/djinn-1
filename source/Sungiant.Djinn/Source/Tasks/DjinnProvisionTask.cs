@@ -22,7 +22,7 @@ namespace Sungiant.Djinn
 			{
 				CloudProvider.Launch(
 					Deployment.Identity,
-					Deployment.MachineBlueprint.Security,
+					Deployment.Blueprint.Security,
 					Deployment.VerticalScale,
 					Deployment.HorizontalScale
 					);

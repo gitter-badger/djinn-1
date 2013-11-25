@@ -41,7 +41,7 @@ namespace Sungiant.Djinn
 			}
 		}
 
-		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
+		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment, String localContext)
 		{
 			LogPerform();
 			

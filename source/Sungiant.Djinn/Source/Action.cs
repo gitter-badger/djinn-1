@@ -19,7 +19,7 @@ namespace Sungiant.Djinn
 			Console.WriteLine(" --> Performing " + GetType() + " Action: " + Description);
 		}
 
-		public abstract void Perform(ICloudProvider cloud, ICloudDeployment deployment);
+		public abstract void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment, String localContext);
 	}
 }
 

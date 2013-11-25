@@ -116,7 +116,7 @@ Global
 		{39484047-9CD3-48FE-8D58-220ED4D4106D} = {8575B2EF-7193-4393-BF87-CA33B8ABB879}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Sungiant.Djinn\Sungiant.Djinn.csproj
+		StartupItem = source\Sungiant.Djinn\Sungiant.Djinn.csproj
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

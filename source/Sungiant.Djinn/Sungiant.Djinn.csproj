@@ -53,16 +53,16 @@
     <Compile Include="Source\Tasks\DjinnSshTask.cs" />
     <Compile Include="Source\Task.cs" />
     <Compile Include="Source\Environment\Deployment.cs" />
-    <Compile Include="Source\Environment\DeploymentGroup.cs" />
-    <Compile Include="Source\Environment\MachineBlueprint.cs" />
-    <Compile Include="Source\Environment\Specifications\MachineBlueprintSpecification.cs" />
-    <Compile Include="Source\Environment\Specifications\DeploymentGroupSpecification.cs" />
     <Compile Include="Source\Environment\Specifications\DeploymentSpecification.cs" />
     <Compile Include="Source\DjinnEnvironment.cs" />
     <Compile Include="Source\Actions\UpstartDaemon.cs" />
     <Compile Include="Source\Actions\NginxServerBlock.cs" />
     <Compile Include="Source\ActionGroup.cs" />
-    <Compile Include="Source\DjinnEnvironmentSpecification.cs" />
+    <Compile Include="Source\Environment\Specifications\ZoneSpecification.cs" />
+    <Compile Include="Source\Environment\Specifications\BlueprintSpecification.cs" />
+    <Compile Include="Source\Environment\Zone.cs" />
+    <Compile Include="Source\Environment\Blueprint.cs" />
+    <Compile Include="Source\DjinnEnvironmentSetupData.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

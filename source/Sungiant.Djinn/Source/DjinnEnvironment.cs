@@ -6,36 +6,30 @@ namespace Sungiant.Djinn
 {
 	public class DjinnEnvironment
 	{
-		DjinnEnvironmentSpecification Spec { get; set; }
+		DjinnEnvironmentSetupData Spec { get; set; }
 
-		public DjinnEnvironment(DjinnEnvironmentSpecification spec)
+		public DjinnEnvironment(DjinnEnvironmentSetupData spec)
 		{
 			Spec = spec;
 
-			MachineBlueprints = new Dictionary<string, MachineBlueprint>();
+			var blueprints = spec.Projects
+				.SelectMany (x => x.BlueprintSpecifications.Select (y => new Blueprint (y)))
+				.ToDictionary (x => x.Id, y => y);
 
-			Spec.MachineBlueprintSpecifications
-				.Select(x => new MachineBlueprint(x))
-				.ToList()
-				.ForEach(x => MachineBlueprints.Add(x.Id, x));
+			var zones = spec.Projects
+				.SelectMany (x => x.ZoneSpecifications.Select (y => new Zone (y)))
+				.ToDictionary (x => x.Id, y => y);
 
-			DeploymentGroups = new Dictionary<string, DeploymentGroup>();
-
-			Spec.DeploymentGroupSpecifications
-				.Select(x => new DeploymentGroup(x))
-				.ToList()
-				.ForEach(x => DeploymentGroups.Add(x.Id, x));
-
-			Deployments = Spec.DeploymentSpecifications
-				.Select(x => new Deployment(x, DeploymentGroups, MachineBlueprints))
+			Deployments = spec.Projects
+				.SelectMany (x => x.DeploymentSpecifications.Select (y => new Deployment(y, zones, blueprints, x.LocalContext)))
 				.ToList();
+
 		}
 
+		/// <summary>
+		/// All Deployments in the current workgroup.
+		/// </summary>
 		public List<Deployment> Deployments { get; private set; }
-		public Dictionary<String, DeploymentGroup> DeploymentGroups { get; private set; }
-		public Dictionary<String, MachineBlueprint> MachineBlueprints { get; private set; }
-
-
 	}
 }
 

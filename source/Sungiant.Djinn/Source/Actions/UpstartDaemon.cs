@@ -19,7 +19,7 @@ namespace Sungiant.Djinn
 		public String DaemonName { get; set; }
 		public List<String> DaemonCommands { get; set; }
 
-		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
+		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment, String localContext)
 		{
 			LogPerform();
 

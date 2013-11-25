@@ -19,7 +19,7 @@ namespace Sungiant.Djinn
 		// is this run here or on the remote machine
 		public ActionContext Context { get; set; }
 
-		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
+		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment, String localContext)
 		{
 			LogPerform();
 

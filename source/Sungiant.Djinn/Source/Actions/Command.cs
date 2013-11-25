@@ -17,7 +17,7 @@ namespace Sungiant.Djinn
 		public String Name { get; set; }
 		public String Arguments { get; set; }
 
-		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
+		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment, String localContext)
 		{
 			LogPerform();
 

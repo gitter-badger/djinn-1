@@ -21,13 +21,14 @@ namespace Sungiant.Djinn
 		// is this run here or on the remote machine
 		public ActionContext Context { get; set; }
 
-		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
+		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment, String localContext)
 		{
 			LogPerform();
 
 			var command = "xbuild";
 
-			var projFullPath = DjinnConfiguration.Instance.ActiveWorkgroup.RepoDirectory + ProjectPath;
+			String blueprintsDirectory = Path.Combine (localContext, "blueprints");
+			var projFullPath = Path.Combine (blueprintsDirectory, ProjectPath);
 
 			if (string.IsNullOrEmpty (Verbosity))
 			{
