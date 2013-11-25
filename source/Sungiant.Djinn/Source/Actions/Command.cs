@@ -9,25 +9,23 @@ namespace Sungiant.Djinn
 	{
 		public Command(String description) : base(description)
 		{
-			Arguments = string.Empty;
+			Value = string.Empty;
 		}
 
 		public ActionContext ActionContext { get; set; }
 
-		public String Name { get; set; }
-		public String Arguments { get; set; }
+		public String Value { get; set; }
+
+		public Boolean IgnoreFailure { get; set; }
 
 		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment, String localContext)
 		{
 			LogPerform();
 
-			String cmd = Name + " " + Arguments;
-
-
 			switch(ActionContext)
 			{
-				case ActionContext.Local: ProcessHelper.Run(Name, Arguments, Console.WriteLine); break;
-				case ActionContext.Remote: cloudProvider.RunCommand(cloudDeployment, cmd); break;
+				case ActionContext.Local: ProcessHelper.Run(Value, "", Console.WriteLine); break;
+				case ActionContext.Remote: cloudProvider.RunCommand(cloudDeployment, Value, IgnoreFailure); break;
 			}
 		}
 	}

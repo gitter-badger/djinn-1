@@ -94,7 +94,7 @@ namespace Sungiant.Cloud.Aws
 
 		}
 
-		public void RunCommands(ICloudDeployment deployment, String[] commands)
+		public void RunCommands(ICloudDeployment deployment, String[] commands, Boolean ignoreFailures)
 		{
 			foreach (var endpoint in deployment.Endpoints)
 			{
@@ -118,7 +118,7 @@ namespace Sungiant.Cloud.Aws
 					}.Join (" "),
 					Console.WriteLine);
 
-				if (exitCode != 0)
+				if (exitCode != 0 && ignoreFailures)
 				{
 					throw new Exception ("Exited with code " + exitCode);
 				}
@@ -126,9 +126,9 @@ namespace Sungiant.Cloud.Aws
 			
 		}
 
-		public void RunCommand(ICloudDeployment deployment, String command)
+		public void RunCommand(ICloudDeployment deployment, String command, Boolean ignoreFailure)
 		{
-			RunCommands (deployment, new String[]{ command });
+			RunCommands (deployment, new String[]{ command }, ignoreFailure);
 		}
 
 		public void Destroy(CloudDeploymentIdentity instanceIdentifier)

@@ -56,7 +56,7 @@ namespace Sungiant.Djinn
 
 		static OptionSet OptionSet;
 
-		const string Version = "0.2.1";
+		const string Version = "0.2.2";
 
 		static Djinn()
 		{
