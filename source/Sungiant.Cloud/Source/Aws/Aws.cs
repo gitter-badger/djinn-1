@@ -118,12 +118,11 @@ namespace Sungiant.Cloud.Aws
 					}.Join (" "),
 					Console.WriteLine);
 
-				if (exitCode != 0 && ignoreFailures)
+				if (exitCode != 0 && !ignoreFailures)
 				{
 					throw new Exception ("Exited with code " + exitCode);
 				}
 			}
-			
 		}
 
 		public void RunCommand(ICloudDeployment deployment, String command, Boolean ignoreFailure)
