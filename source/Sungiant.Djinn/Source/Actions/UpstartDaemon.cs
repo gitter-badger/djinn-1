@@ -41,7 +41,7 @@ namespace Sungiant.Djinn
 
 			File.WriteAllText(tempUpstartJobPath, string.Join("\n", upstartScript));
 			
-			cloudProvider.RunCommand(cloudDeployment, "sudo service", DaemonName + " stop");
+			cloudProvider.RunCommand(cloudDeployment, "sudo service " + DaemonName + " stop");
 
 			foreach( var endpoint in cloudDeployment.Endpoints )
 			{
@@ -58,9 +58,9 @@ namespace Sungiant.Djinn
 				);
 			}
 
-			cloudProvider.RunCommand(cloudDeployment, "sudo mv", filename + " /etc/init/" + filename);
-			cloudProvider.RunCommand(cloudDeployment, "sudo service", DaemonName + " start");
-			cloudProvider.RunCommand(cloudDeployment, "sudo service", DaemonName + " status");
+			cloudProvider.RunCommand(cloudDeployment, "sudo mv " + filename + " /etc/init/" + filename);
+			cloudProvider.RunCommand(cloudDeployment, "sudo service " + DaemonName + " start");
+			cloudProvider.RunCommand(cloudDeployment, "sudo service " + DaemonName + " status");
 
 		}
 	}

@@ -173,26 +173,26 @@ namespace Sungiant.Djinn
 			
 			File.WriteAllText(tempNginxConfigFile, string.Join("\n", nginxScript));
 			
-			cloudProvider.RunCommand(cloudDeployment, "sudo service", "nginx stop");
+			cloudProvider.RunCommand(cloudDeployment, "sudo service " + "nginx stop");
 			
 			foreach( var endpoint in cloudDeployment.Endpoints )
 			{
 				ProcessHelper.Run(
 					"rsync",
-					new string[]
+					new String[]
 					{
 						"-v",
-						string.Format("--rsh \"ssh -o StrictHostKeyChecking=no -i {0}\"", cloudProvider.PrivateKeyPath),
+						String.Format("--rsh \"ssh -o StrictHostKeyChecking=no -i {0}\"", cloudProvider.PrivateKeyPath),
 						tempNginxConfigFile,
-						string.Format("{0}@{1}:{2}", cloudProvider.User, endpoint, filename)
+						String.Format("{0}@{1}:{2}", cloudProvider.User, endpoint, filename)
 					}.Join(" "),
 				Console.WriteLine
 				);
 			}
 			
-			cloudProvider.RunCommand(cloudDeployment, "sudo mv", filename + " /etc/nginx/sites-enabled/" + Name);
-			cloudProvider.RunCommand(cloudDeployment, "sudo service", "nginx start");
-			cloudProvider.RunCommand(cloudDeployment, "sudo service", "nginx status");
+			cloudProvider.RunCommand(cloudDeployment, "sudo mv "+ filename + " /etc/nginx/sites-enabled/" + Name);
+			cloudProvider.RunCommand(cloudDeployment, "sudo service "+ "nginx start");
+			cloudProvider.RunCommand(cloudDeployment, "sudo service "+ "nginx status");
 
 		}
 	}

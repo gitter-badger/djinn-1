@@ -64,7 +64,7 @@ namespace Sungiant.Djinn
 			{
 				cloudProvider.RunCommand(
 					cloudDeployment,
-					"scp",
+					"scp " +
 					new string[]
 					{
 						Arguments.Join(" "),

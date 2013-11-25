@@ -28,7 +28,7 @@ namespace Sungiant.Djinn
 					machineIndex = int.Parse( Console.ReadLine());
 				}
 			
-				ProcessHelper.Run(
+				Int32 exitCode = ProcessHelper.Run(
 					"ssh", 
 					new string[]
 					{
@@ -37,6 +37,9 @@ namespace Sungiant.Djinn
 						CloudProvider.User + "@" + cd.Endpoints[machineIndex]
 					}.Join(" ")
 				);
+
+				if (exitCode != 0)
+					throw new Exception("Exited with code " + exitCode);
 			}
 		}
 	}

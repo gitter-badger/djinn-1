@@ -94,26 +94,42 @@ namespace Sungiant.Cloud.Aws
 
 		}
 
-		public void RunCommand(ICloudDeployment deployment, String command, String arguments)
+		public void RunCommands(ICloudDeployment deployment, String[] commands)
 		{
-			foreach( var endpoint in deployment.Endpoints )
+			foreach (var endpoint in deployment.Endpoints)
 			{
-				ProcessHelper.Run(
+				commands = commands
+					.Where (x => !string.IsNullOrEmpty (x))
+					.Select (x => x.Replace ("\"", "\\\""))
+					.ToArray ();
+
+				string command = string.Format ("\"{0}\"", string.Join ("; ", commands));
+				;
+
+				Int32 exitCode = ProcessHelper.Run (
 					"ssh", 
-					new string[]
+					new String[]
 					{
 						"-o StrictHostKeyChecking=no",
 						"-i", 
 						PrivateKeyPath,
-						string.Format("{0}@{1}", User, endpoint),
-						string.Format("{0} {1}", command, arguments) 
-					}.Join(" "),
-					(x) => Console.WriteLine(x)
+						string.Format ("{0}@{1}", User, endpoint),
+						command 
+					}.Join (" "),
+					Console.WriteLine);
 
-				);
+				if (exitCode != 0)
+				{
+					throw new Exception ("Exited with code " + exitCode);
+				}
 			}
+			
 		}
 
+		public void RunCommand(ICloudDeployment deployment, String command)
+		{
+			RunCommands (deployment, new String[]{ command });
+		}
 
 		public void Destroy(CloudDeploymentIdentity instanceIdentifier)
 		{

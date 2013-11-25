@@ -21,11 +21,13 @@ namespace Sungiant.Djinn
 		{
 			LogPerform();
 
+			String cmd = Name + " " + Arguments;
+
 
 			switch(ActionContext)
 			{
 				case ActionContext.Local: ProcessHelper.Run(Name, Arguments, Console.WriteLine); break;
-				case ActionContext.Remote: cloudProvider.RunCommand(cloudDeployment, Name, Arguments); break;
+				case ActionContext.Remote: cloudProvider.RunCommand(cloudDeployment, cmd); break;
 			}
 		}
 	}

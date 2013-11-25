@@ -42,10 +42,12 @@ namespace Sungiant.Djinn
 				arguments = "-v " + arguments;
 			}
 
+			String cmd = command + " " + arguments;
+
 			switch(Context)
 			{
 				case ActionContext.Local: ProcessHelper.Run (command, arguments, Console.WriteLine); break;
-				case ActionContext.Remote: cloudProvider.RunCommand(cloudDeployment, command, arguments); break;
+				case ActionContext.Remote: cloudProvider.RunCommand(cloudDeployment, cmd); break;
 			}
 
 		}

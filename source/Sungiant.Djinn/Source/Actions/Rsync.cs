@@ -114,7 +114,7 @@ namespace Sungiant.Djinn
 			{
 				cloudProvider.RunCommand(
 					cloudDeployment,
-					"rsync",
+					"rsync " +
 					new string[]
 					{
 						Arguments.Join(" "),
