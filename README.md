@@ -19,7 +19,7 @@ Then run:
 
 Example configuation:
 
-# /example_project_dir/djinn/blueprints/nginx-box.json
+### /example_project_dir/djinn/blueprints/nginx-box.json
 
     {
         "BlueprintId": "nginx-box",
@@ -116,7 +116,7 @@ Example configuation:
         ]
     }
 
-# /example_project_dir/djinn/deployments/test-zone|nginx-box.json
+### /example_project_dir/djinn/deployments/test-zone|nginx-box.json
 
     {
         "ZoneId": "test-zone",
@@ -126,7 +126,7 @@ Example configuation:
     }
 
 
-# /example_project_dir/djinn/zones/test-zone.json
+### /example_project_dir/djinn/zones/test-zone.json
 
     {
         "ZoneId": "test-zone",
