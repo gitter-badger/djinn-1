@@ -82,6 +82,52 @@ namespace Sungiant.Djinn
 			};
 		}
 
+		readonly static List<String> supportedExtensions = new List<String>(){ ".xml", ".json" };
+
+		public static List<T> LoadSpecifications<T>(String directory) where T : class, new()
+		{
+			var result = Directory.GetFiles (directory)
+			    // filter out unsupported file types
+				.Where (x => supportedExtensions.Contains(Path.GetExtension(x).ToLower()))
+				// strip off the file name
+				.Select (x => Path.GetFileNameWithoutExtension (x))
+				// select distinct filenames, incase there are files of 
+				// the same name but with different supported extensions
+				.Distinct ()
+				// select the first extension that exists
+				.Select (x => x + supportedExtensions.Find(y => File.Exists(Path.Combine(directory, x + y))))
+				// deserialise the chosen file
+				.Select(x => FromFile<T>(Path.Combine(directory, x)))
+				// and return
+				.ToList();
+
+			return result;
+		}
+
+		public static T FromFile<T>(String file) where T : class, new()
+		{
+			if (!File.Exists (file))
+				throw new Exception ("Failed to find file: " + file);
+
+			String allText = file.ReadAllText ();
+			T spec = null;
+			String ext = Path.GetExtension (file).ToLower();
+
+			if (ext == supportedExtensions[0])
+			{
+				spec = allText.FromXml<T> ();
+			}
+			else if (ext == supportedExtensions[1])
+			{
+				spec = allText.FromJson<T> ();
+			}
+
+			if (spec == null)
+				throw new Exception ("Failed to deserialize file: " + file);
+
+			return spec;
+		}
+
         public static void Main(string[] args)
         {
 			
@@ -104,31 +150,9 @@ namespace Sungiant.Djinn
 
 			foreach (var projectConfig in DjinnConfiguration.Instance.ActiveWorkgroup.ProjectConfigurations)
 			{
-				var blueprint_specs = new List<BlueprintSpecification> ();
-				var deployment_specs = new List<DeploymentSpecification> ();
-				var zone_specs = new List<ZoneSpecification> ();
-
-				foreach(var file in Directory.GetFiles(projectConfig.BlueprintsDirectory))
-				{
-					String allText = file.ReadAllText ();
-					var spec = allText.FromXml<BlueprintSpecification> ();
-					blueprint_specs.Add (spec);
-				}
-
-				foreach(var file in Directory.GetFiles(projectConfig.DeploymentsDirectory))
-				{
-					String allText = file.ReadAllText ();
-					var spec = allText.FromXml<DeploymentSpecification> ();
-					deployment_specs.Add (spec);
-				}
-
-				foreach(var file in Directory.GetFiles(projectConfig.ZonesDirectory))
-				{
-					String allText = file.ReadAllText ();
-					var spec = allText.FromXml<ZoneSpecification> ();
-					zone_specs.Add (spec);
-				}
-
+				var blueprint_specs = LoadSpecifications<BlueprintSpecification> (projectConfig.BlueprintsDirectory);
+				var deployment_specs = LoadSpecifications<DeploymentSpecification> (projectConfig.DeploymentsDirectory);
+				var zone_specs = LoadSpecifications<ZoneSpecification> (projectConfig.ZonesDirectory);
 
 				environmentSpecification.AddProject (
 					projectConfig.DjinnDirectory,
