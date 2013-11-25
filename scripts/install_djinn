@@ -11,3 +11,36 @@ chmod +x /usr/local/bin/djinn
 cp bin/Debug/Sungiant.Djinn.exe /usr/local/bin/djinn_app/Sungiant.Djinn.exe
 cp bin/Debug/*.dll /usr/local/bin/djinn_app/
 
+TIME="$(date +%s)"
+DEPLOYMENTS_DIR="`pwd`"
+
+# Rewrite the installation file.
+echo "{" > $HOME/.djinn.installation
+echo "    \"InstallTime\":$TIME," >> $HOME/.djinn.installation
+echo "}" >> $HOME/.djinn.installation
+
+# If the settings file doesn't exist, create a default.
+if [ ! -f .djinn.settings ]; then
+    echo "{" > $HOME/.djinn.settings
+    echo "    \"ActiveWorkgroup\":0," >> $HOME/.djinn.settings
+    echo "}" >> $HOME/.djinn.settings
+fi
+
+# If the djinn file doesn't exist, create an example one.
+if [ ! -f $HOME/.djinn ]; then
+    echo "{" > $HOME/.djinn
+    echo "    \"Workgroups\":" >> $HOME/.djinn
+    echo "    [" >> $HOME/.djinn
+    echo "        {" >> $HOME/.djinn
+    echo "            \"Name\":\"default\"" >> $HOME/.djinn
+    echo "            \"ProjectConfigurations\":" >> $HOME/.djinn
+    echo "            [" >> $HOME/.djinn
+    echo "                {" >> $HOME/.djinn
+    echo "                    \"Name\":\"example_project\"" >> $HOME/.djinn
+    echo "                    \"DjinnDirectory\":\"/Users/ash/sungiant/example_project_dir/djinn/\"" >> $HOME/.djinn
+    echo "                }" >> $HOME/.djinn
+    echo "            ]" >> $HOME/.djinn
+    echo "        }" >> $HOME/.djinn
+    echo "    ]" >> $HOME/.djinn
+    echo "}" >> $HOME/.djinn
+fi
