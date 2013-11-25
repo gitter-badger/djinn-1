@@ -2,7 +2,6 @@
 cd ../source/Sungiant.Djinn/
 xbuild Sungiant.Djinn.csproj /p:Configuration=Debug /verbosity:quiet /clp:Summary /nologo
 
-
 rm -r -f /usr/local/bin/djinn_app
 mkdir /usr/local/bin/djinn_app
 
@@ -12,18 +11,3 @@ chmod +x /usr/local/bin/djinn
 cp bin/Debug/Sungiant.Djinn.exe /usr/local/bin/djinn_app/Sungiant.Djinn.exe
 cp bin/Debug/*.dll /usr/local/bin/djinn_app/
 
-TIME="$(date +%s)"
-DEPLOYMENTS_DIR="`pwd`"
-echo "{" > $HOME/.djinn
-echo "    \"InstallTime\":$TIME," >> $HOME/.djinn
-echo "    \"ActiveWorkgroup\":0," >> $HOME/.djinn
-echo "    \"Workgroups\":" >> $HOME/.djinn
-echo "    [" >> $HOME/.djinn
-echo "        {" >> $HOME/.djinn
-echo "            \"RepoDirectory\":\"$HOME/repos/\"," >> $HOME/.djinn
-echo "            \"MachineBlueprintSpecificationsDirectory\":\"$HOME/repos/djinn_config/machine_blueprints/\"," >> $HOME/.djinn
-echo "            \"DeploymentSpecificationsDirectory\":\"$HOME/repos/djinn_config/deployment_specifications/\"," >> $HOME/.djinn
-echo "            \"DeploymentGroupSpecificationsDirectory\":\"$HOME/repos/djinn_config/deployment_group_specifications/\"," >> $HOME/.djinn
-echo "        }" >> $HOME/.djinn
-echo "    ]" >> $HOME/.djinn
-echo "}" >> $HOME/.djinn
