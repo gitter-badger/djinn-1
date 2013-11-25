@@ -105,23 +105,31 @@ namespace Sungiant.Djinn
 
 			foreach (var projectConfig in DjinnConfiguration.Instance.ActiveWorkgroup.ProjectConfigurations)
 			{
-				var blueprint_specs = 
-					Directory.GetFiles(projectConfig.BlueprintsDirectory)
-						.Select(x => x.ReadAllText())
-						.Select(x => x.FromXml<BlueprintSpecification>())
-						.ToList();
+				var blueprint_specs = new List<BlueprintSpecification> ();
+				var deployment_specs = new List<DeploymentSpecification> ();
+				var zone_specs = new List<ZoneSpecification> ();
 
-				var deployment_specs = 
-					Directory.GetFiles(projectConfig.DeploymentsDirectory)
-						.Select(x => x.ReadAllText())
-						.Select(x => x.FromXml<DeploymentSpecification>())
-						.ToList();
+				foreach(var file in Directory.GetFiles(projectConfig.BlueprintsDirectory))
+				{
+					String allText = file.ReadAllText ();
+					var spec = allText.FromXml<BlueprintSpecification> ();
+					blueprint_specs.Add (spec);
+				}
 
-				var zone_specs = 
-					Directory.GetFiles(projectConfig.ZonesDirectory)
-						.Select(x => x.ReadAllText())
-						.Select(x => x.FromXml<ZoneSpecification>())
-						.ToList();
+				foreach(var file in Directory.GetFiles(projectConfig.DeploymentsDirectory))
+				{
+					String allText = file.ReadAllText ();
+					var spec = allText.FromXml<DeploymentSpecification> ();
+					deployment_specs.Add (spec);
+				}
+
+				foreach(var file in Directory.GetFiles(projectConfig.ZonesDirectory))
+				{
+					String allText = file.ReadAllText ();
+					var spec = allText.FromXml<ZoneSpecification> ();
+					zone_specs.Add (spec);
+				}
+
 
 				environmentSpecification.AddProject (
 					projectConfig.DjinnDirectory,
