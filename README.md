@@ -22,14 +22,14 @@ Example configuation:
 ### /example_project_dir/djinn/blueprints/nginx-box.json
 
     {
-        "BlueprintId": "nginx-box",
+        "BlueprintIdentifier": "nginx-box",
         "Description": "Example blueprint for a machine running Nginx.",
         "OpenPorts":
         [
             22,
             80
         ],
-        "Configure":
+        "ConfigurationActions":
         [
             {
                 "Name": "software",
@@ -37,14 +37,14 @@ Example configuation:
                 "Actions":
                 [
                     {
-                        "__type": "Sungiant.Djinn.Command, Sungiant.Djinn",
+                        "Type": "Command",
                         "Description": "Update aptitude's package manifest",
-                        "ActionContext": "Remote",
+                        "IsContextRemote": true,
                         "IgnoreFailure": false,
                         "Value": "sudo apt-get update"
                     },
                     {
-                        "__type": "Sungiant.Djinn.AptitudeInstallation, Sungiant.Djinn",
+                        "Type": "AptitudeInstallation",
                         "Description": "Install nginx",
                         "PackageNames":
                         [
@@ -52,21 +52,21 @@ Example configuation:
                         ]
                     },
                     {
-                        "__type": "Sungiant.Djinn.Command, Sungiant.Djinn",
+                        "Type": "Command",
                         "Description": "Remove the default nginx site enabled symlink",
-                        "ActionContext": "Remote",
+                        "IsContextRemote": true,
                         "IgnoreFailure": false,
                         "Value": "sudo rm -f /etc/nginx/sites-enabled/default"
                     },
                     {
-                        "__type": "Sungiant.Djinn.Command, Sungiant.Djinn",
+                        "Type": "Command",
                         "Description": "Remove the default nginx site available symlink",
-                        "ActionContext": "Remote",
+                        "IsContextRemote": true,
                         "IgnoreFailure": false,
                         "Value": "sudo rm -f /etc/nginx/sites-available/default"
                     },
                     {
-                        "__type": "Sungiant.Djinn.AptitudeInstallation, Sungiant.Djinn",
+                        "Type": "AptitudeInstallation",
                         "Description": "Install system utilities",
                         "PackageNames":
                         [
@@ -77,7 +77,7 @@ Example configuation:
                 ]
             }
         ],
-        "Deploy":
+        "DeploymentActions":
         [
             {
                 "Name": "clean",
@@ -85,11 +85,11 @@ Example configuation:
                 "Actions":
                 [
                     {
-                        "__type": "Sungiant.Djinn.Command, Sungiant.Djinn",
+                        "Type": "Command",
                         "Description": "Remove all nginx sites-enabled",
-                        "ActionContext": "Remote",
+                        "IsContextRemote": true,
                         "IgnoreFailure": false,
-                        "Value": "sudo rm /etc/nginx/sites-enabled/*"
+                        "Value": "sudo rm -f /etc/nginx/sites-enabled/*"
                     }
                 ]
             },
@@ -99,13 +99,13 @@ Example configuation:
                 "Actions":
                 [
                     {
-                        "__type": "Sungiant.Djinn.NginxServerBlock, Sungiant.Djinn",
-                        "Name": "default-https",
+                        "Type": "NginxServerBlock",
+                        "Name": "default-http",
                         "Listen": "80",
                         "Locations":
                         [
                             {
-                                "__type": "Sungiant.Djinn.ReturnLocationBlock, Sungiant.Djinn",
+                                "Type": "ReturnLocationBlock",
                                 "Location": "/",
                                 "Return": "200"
                             }
