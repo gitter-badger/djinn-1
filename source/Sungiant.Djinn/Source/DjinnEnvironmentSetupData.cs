@@ -7,9 +7,9 @@ namespace Sungiant.Djinn
 	{
 		public void AddProject (
 			String localContext,
-			List<BlueprintSpecification> blueprintSpecifications,
-			List<DeploymentSpecification> deploymentSpecifications,
-			List<ZoneSpecification> zoneSpecifications)
+			List<Specification.Blueprint> blueprintSpecifications,
+			List<Specification.Deployment> deploymentSpecifications,
+			List<Specification.Zone> zoneSpecifications)
 		{
 			projects.Add (
 				new Project()
@@ -25,9 +25,9 @@ namespace Sungiant.Djinn
 		{
 			public String LocalContext { get; set; }
 
-			public List<BlueprintSpecification> BlueprintSpecifications { get; set; }
-			public List<DeploymentSpecification> DeploymentSpecifications { get; set; }
-			public List<ZoneSpecification> ZoneSpecifications { get; set; }
+			public List<Specification.Blueprint> BlueprintSpecifications { get; set; }
+			public List<Specification.Deployment> DeploymentSpecifications { get; set; }
+			public List<Specification.Zone> ZoneSpecifications { get; set; }
 		}
 
 		readonly List<Project> projects = new List<Project>();

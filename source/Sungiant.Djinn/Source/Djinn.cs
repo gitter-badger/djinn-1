@@ -45,6 +45,11 @@ using System.Threading;
 
 namespace Sungiant.Djinn
 {
+	internal class JsonTypeObject
+	{
+		public String Type { get; set; }
+	}
+
 	static class Djinn
     {
 		public static DjinnEnvironment DjinnEnvironment { get; private set; }
@@ -56,7 +61,7 @@ namespace Sungiant.Djinn
 
 		static OptionSet OptionSet;
 
-		const string Version = "0.2.2";
+		const string Version = "0.2.3";
 
 		static Djinn()
 		{
@@ -128,6 +133,31 @@ namespace Sungiant.Djinn
 			return spec;
 		}
 
+		static void ConfigureCustomJsonDeserialization()
+		{
+			JsConfig<Specification.INginxLocationBlock>.RawDeserializeFn = (String s) =>
+			{
+				var d = s.FromJson<JsonTypeObject>();
+
+				var t = Type.GetType("Sungiant.Djinn.Specification." + d.Type + ", Sungiant.Djinn.Specification");
+
+				Object o = JsonSerializer.DeserializeFromString(s, t);
+
+				return (o as Specification.INginxLocationBlock);
+			};
+
+			JsConfig<Specification.IAction>.RawDeserializeFn = (String s) =>
+			{
+				var d = s.FromJson<JsonTypeObject>();
+
+				var t = Type.GetType("Sungiant.Djinn.Specification." + d.Type + ", Sungiant.Djinn.Specification");
+
+				Object o = JsonSerializer.DeserializeFromString(s, t);
+
+				return (o as Specification.IAction);
+			};
+		}
+
         public static void Main(string[] args)
         {
 			
@@ -139,6 +169,8 @@ namespace Sungiant.Djinn
 			Console.WriteLine ("        \\/                      \\/         \\/ ");
 			Console.WriteLine ("Djinn v" + Version);
 
+			ConfigureCustomJsonDeserialization ();
+
 			// loads up djinn's configuration file
 			DjinnConfiguration.Instance.Load ();
 
@@ -146,15 +178,15 @@ namespace Sungiant.Djinn
 
 			Console.WriteLine ("Active Workgroup: " + DjinnConfiguration.Instance.ActiveWorkgroup.Name);
 
-			var environmentSpecification = new DjinnEnvironmentSetupData ();
+			var environmentSetupData = new DjinnEnvironmentSetupData ();
 
 			foreach (var projectConfig in DjinnConfiguration.Instance.ActiveWorkgroup.ProjectConfigurations)
 			{
-				var blueprint_specs = LoadSpecifications<BlueprintSpecification> (projectConfig.BlueprintsDirectory);
-				var deployment_specs = LoadSpecifications<DeploymentSpecification> (projectConfig.DeploymentsDirectory);
-				var zone_specs = LoadSpecifications<ZoneSpecification> (projectConfig.ZonesDirectory);
+				var blueprint_specs = LoadSpecifications<Specification.Blueprint> (projectConfig.BlueprintsDirectory);
+				var deployment_specs = LoadSpecifications<Specification.Deployment> (projectConfig.DeploymentsDirectory);
+				var zone_specs = LoadSpecifications<Specification.Zone> (projectConfig.ZonesDirectory);
 
-				environmentSpecification.AddProject (
+				environmentSetupData.AddProject (
 					projectConfig.DjinnDirectory,
 					blueprint_specs,
 					deployment_specs,
@@ -162,7 +194,7 @@ namespace Sungiant.Djinn
 				);
 			}
 
-			DjinnEnvironment = new DjinnEnvironment(environmentSpecification);
+			DjinnEnvironment = new DjinnEnvironment(environmentSetupData);
 
 			DjinnTask djinnTask = ParseArguments(args);
 
@@ -237,10 +269,10 @@ namespace Sungiant.Djinn
 				return null;
 			}
 			
-			string task = args[0];
-			string deploymentGroupId = args[1];
-			string machineBlueprintId = args[2];
-			string extra = null;
+			String task = args[0];
+			String deploymentGroupIdentifier = args[1];
+			String machineBlueprintIdentifier = args[2];
+			String extra = null;
 
 			if( args.Length == 4 )
 			{
@@ -251,7 +283,7 @@ namespace Sungiant.Djinn
 
 			// make sure the deployment we want to talk to exists
 			var deployment = DjinnEnvironment.Deployments
-				.Find (x => (x.DeploymentGroup.Id == deploymentGroupId && x.Blueprint.Id == machineBlueprintId));
+				.Find (x => (x.DeploymentGroup.Identifier == deploymentGroupIdentifier && x.Blueprint.Identifier == machineBlueprintIdentifier));
 
 			if (deployment == null)
 			{

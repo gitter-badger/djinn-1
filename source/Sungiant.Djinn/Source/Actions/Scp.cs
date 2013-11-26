@@ -8,109 +8,127 @@ using ServiceStack.Text;
 namespace Sungiant.Djinn
 {
 	public class Scp
-		: Action
+		: Action<Specification.Scp>
 	{
-		public Scp(String description) : base(description) { }
+		public Scp(Specification.Scp specification, String djinnContext) 
+			: base(specification, djinnContext) {}
 
-		// sets the -r flag
-		public Boolean Recursive { get; set; }
-		
-		// sets the -v flag
-		public Boolean Verbose { get; set; }
-		
-		// sets the -q flag
-		public Boolean Quiet { get; set; }
-
-		public String SourcePath { get; set; }
-		public ActionContext SourceContext { get; set; }
-		
-		public String DestinationPath { get; set; }
-		public ActionContext DestinationContext { get; set; }
-
-		string[] Arguments
+		String Source
 		{
 			get
 			{
-				var result = new List<string>();
+				switch (SourceContext)
+				{ 
+					case MachineContext.Local: return Path.Combine (DjinnContext, Specification.Source);
+					case MachineContext.Remote: default: return Specification.Source;
+				}
+			}
+		}
 
-				if( Recursive ) result.Add("-r");
-				if( Verbose ) result.Add("-v");
-				if( Quiet ) result.Add("-q");
+		MachineContext SourceContext
+		{
+			get { return Specification.IsSourceContextRemote ? MachineContext.Remote : MachineContext.Local; }
+		}
+
+		String Destination
+		{
+			get
+			{
+				switch (DestinationContext)
+				{ 
+					case MachineContext.Local: return Path.Combine (DjinnContext, Specification.Destination);
+					case MachineContext.Remote: default: return Specification.Destination;
+				}
+			}
+		}
+
+		MachineContext DestinationContext
+		{
+			get { return Specification.IsDestinationContextRemote ? MachineContext.Remote : MachineContext.Local; }
+		}
+
+		String[] Arguments
+		{
+			get
+			{
+				var result = new List<String>();
+
+				if (Specification.Recursive) result.Add("-r");
+				if (Specification.Verbose) result.Add("-v");
+				if (Specification.Quiet) result.Add("-q");
 				
 				return result.ToArray();
 			}
 		}
 
-		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment, String localContext)
+		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
 		{
 			LogPerform();
-			
-			if( SourceContext == ActionContext.Local && DestinationContext == ActionContext.Local )
+
+			if( SourceContext == MachineContext.Local && DestinationContext == MachineContext.Local )
 			{
 				ProcessHelper.Run(
-					new string[]
+					new String[]
 					{
 						"scp",
 						Arguments.Join(" "),
-						SourcePath,
-						DestinationPath
+						Source,
+						Destination
 					}.Join(" "),
-					Console.WriteLine
-				);
+					Console.WriteLine);
+
 				return;
 			}
 			
-			if( SourceContext == ActionContext.Remote && DestinationContext == ActionContext.Remote )
+			if( SourceContext == MachineContext.Remote && DestinationContext == MachineContext.Remote )
 			{
 				cloudProvider.RunCommand(
 					cloudDeployment,
-					new string[]
+					new String[]
 					{
 						"scp",
 						Arguments.Join(" "),
-						SourcePath,
-						DestinationPath
-					}.Join(" ")
-				);
+						Source,
+						Destination
+					}.Join(" "));
+
 				return;
 			}
 			
-			if( SourceContext == ActionContext.Local && DestinationContext == ActionContext.Remote )
+			if( SourceContext == MachineContext.Local && DestinationContext == MachineContext.Remote )
 			{
 				foreach( var endpoint in cloudDeployment.Endpoints )
 				{
-					ProcessHelper.Run(
-						new string[]
+					ProcessHelper.Run (
+						new String[]
 						{
 							"scp",
 							Arguments.Join(" "),
 							"-o StrictHostKeyChecking=no",
-							string.Format("-i {0}", cloudProvider.PrivateKeyPath),
-							SourcePath,
-							string.Format("{0}@{1}:{2}", cloudProvider.User, endpoint, DestinationPath)
+							String.Format("-i {0}", cloudProvider.PrivateKeyPath),
+							Source,
+							String.Format("{0}@{1}:{2}", cloudProvider.User, endpoint, Destination)
 						}.Join(" "),
-						Console.WriteLine
-					);
+						Console.WriteLine);
 				}
 				return;
 			}
 			
-			if( SourceContext == ActionContext.Remote && DestinationContext == ActionContext.Local )
+			if( SourceContext == MachineContext.Remote && DestinationContext == MachineContext.Local )
 			{
 				foreach( var endpoint in cloudDeployment.Endpoints )
 				{
-					ProcessHelper.Run(
-						new string[]
+					ProcessHelper.Run (
+						new String[]
 						{
 							"scp",
 							Arguments.Join(" "),
 							"-o StrictHostKeyChecking=no",
-							string.Format("-i {0}", cloudProvider.PrivateKeyPath),
-							string.Format("{0} {1}:{2}", cloudProvider.User, endpoint, SourcePath),
-							DestinationPath
+							String.Format("-i {0}", cloudProvider.PrivateKeyPath),
+							String.Format("{0} {1}:{2}", cloudProvider.User, endpoint, Source),
+							Destination
 						}.Join(" "),
-						Console.WriteLine
-					);
+						Console.WriteLine);
 				}
 				return;
 			}

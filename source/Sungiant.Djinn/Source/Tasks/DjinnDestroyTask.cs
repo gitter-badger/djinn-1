@@ -11,8 +11,8 @@ namespace Sungiant.Djinn
 	public class DjinnDestroyTask
 		: DjinnTask
 	{
-		public DjinnDestroyTask( ICloudProvider cloudProvider, Deployment deployment)
-			: base(Task.Destroy, cloudProvider, deployment) {}
+		public DjinnDestroyTask (ICloudProvider cloudProvider, Deployment deployment)
+			: base (Task.Destroy, cloudProvider, deployment) {}
 
 		public override void Run()
 		{

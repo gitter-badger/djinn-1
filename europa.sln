@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Djinn", "source\Su
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cloud", "source\Sungiant.Cloud\Sungiant.Cloud.csproj", "{39484047-9CD3-48FE-8D58-220ED4D4106D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Djinn.Specification", "source\Sungiant.Djinn.Specification\Sungiant.Djinn.Specification.csproj", "{49F9C52F-FA9D-4FF2-8399-FF251F9619B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +76,16 @@ Global
 		{40E91E2D-70F3-463D-9E3E-408AE2A70BA8}.Release|x86.Build.0 = Release|Any CPU
 		{40E91E2D-70F3-463D-9E3E-408AE2A70BA8}.ReleaseSigned|Any CPU.ActiveCfg = Debug|Any CPU
 		{40E91E2D-70F3-463D-9E3E-408AE2A70BA8}.ReleaseSigned|Any CPU.Build.0 = Debug|Any CPU
+		{49F9C52F-FA9D-4FF2-8399-FF251F9619B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49F9C52F-FA9D-4FF2-8399-FF251F9619B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49F9C52F-FA9D-4FF2-8399-FF251F9619B2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{49F9C52F-FA9D-4FF2-8399-FF251F9619B2}.Debug|x86.Build.0 = Debug|Any CPU
+		{49F9C52F-FA9D-4FF2-8399-FF251F9619B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49F9C52F-FA9D-4FF2-8399-FF251F9619B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49F9C52F-FA9D-4FF2-8399-FF251F9619B2}.Release|x86.ActiveCfg = Release|Any CPU
+		{49F9C52F-FA9D-4FF2-8399-FF251F9619B2}.Release|x86.Build.0 = Release|Any CPU
+		{49F9C52F-FA9D-4FF2-8399-FF251F9619B2}.ReleaseSigned|Any CPU.ActiveCfg = Debug|Any CPU
+		{49F9C52F-FA9D-4FF2-8399-FF251F9619B2}.ReleaseSigned|Any CPU.Build.0 = Debug|Any CPU
 		{4DB54B83-D948-4D70-86BD-5EE2DC8E2CE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4DB54B83-D948-4D70-86BD-5EE2DC8E2CE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4DB54B83-D948-4D70-86BD-5EE2DC8E2CE8}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -114,6 +126,7 @@ Global
 		{043738D8-7F8A-423C-BE25-F11A08F77F35} = {B5EC0D17-780D-430F-B6A3-F1B18087869B}
 		{7B1E3659-071D-44B1-B32E-0C1882D35C17} = {8575B2EF-7193-4393-BF87-CA33B8ABB879}
 		{39484047-9CD3-48FE-8D58-220ED4D4106D} = {8575B2EF-7193-4393-BF87-CA33B8ABB879}
+		{49F9C52F-FA9D-4FF2-8399-FF251F9619B2} = {8575B2EF-7193-4393-BF87-CA33B8ABB879}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = source\Sungiant.Djinn\Sungiant.Djinn.csproj

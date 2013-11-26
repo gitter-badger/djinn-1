@@ -9,60 +9,57 @@ using System.IO;
 
 namespace Sungiant.Djinn
 {
+
 	public class ReturnLocationBlock
-		: NginxLocationBlock
+		: NginxLocationBlock<Specification.ReturnLocationBlock>
 	{
-		public String Return { get; set; }
+		public ReturnLocationBlock(Specification.ReturnLocationBlock specification)
+			: base(specification) {}
 
 		public override String[] GetConfig()
 		{
 			return new String[]
 			{
-				"location " + Location + " {",
-				Return == null ? string.Empty : "  return  " + Return + ";",
+				"location " + Specification.Location + " {",
+				Specification.Return == null ? String.Empty : "  return  " + Specification.Return + ";",
 				"}",
 			};
 		}
 	}
 
 	public class StaticLocationBlock
-		: NginxLocationBlock
+		: NginxLocationBlock<Specification.StaticLocationBlock>
 	{
-		public String Root { get; set; }
-
-		public String Index { get; set; }
-
-		public String TryFiles { get; set; }
-
-		public String Rewrite { get; set; }
+		public StaticLocationBlock(Specification.StaticLocationBlock specification)
+			: base(specification) {}
 
 		public override String[] GetConfig()
 		{
 			return new String[]
 			{
-				"location " + Location + " {",
-				Root == null ? string.Empty : "  root  " + Root + ";",
-				Rewrite == null ? string.Empty : "  rewrite " + Rewrite + ";",
-				Index == null ? string.Empty : "  index " + Index + ";",
-				TryFiles == null ? string.Empty : "  try_files " + TryFiles + ";",
+				"location " + Specification.Location + " {",
+				Specification.Root == null ? String.Empty : "  root  " + Specification.Root + ";",
+				Specification.Rewrite == null ? String.Empty : "  rewrite " + Specification.Rewrite + ";",
+				Specification.Index == null ? String.Empty : "  index " + Specification.Index + ";",
+				Specification.TryFiles == null ? String.Empty : "  try_files " + Specification.TryFiles + ";",
 				"}",
 			};
 		}
 	}
 
 	public class ProxyPassLocationBlock
-		: NginxLocationBlock
+		: NginxLocationBlock<Specification.ProxyPassLocationBlock>
 	{
-		public String ProxyPass { get; set; }
-		public String Rewrite { get; set; }
+		public ProxyPassLocationBlock(Specification.ProxyPassLocationBlock specification)
+			: base(specification) {}
 
 		public override String[] GetConfig()
 		{
 			return new String[]
 			{
-				"location " + Location + " {",
-				Rewrite == null ? string.Empty : "  rewrite " + Rewrite + ";",
-				"  proxy_pass " + ProxyPass + ";",
+				"location " + Specification.Location + " {",
+				Specification.Rewrite == null ? String.Empty : "  rewrite " + Specification.Rewrite + ";",
+				"  proxy_pass " + Specification.ProxyPass + ";",
 				"  proxy_set_header  X-Remote-Address  $remote_addr;",
 				"  proxy_set_header  X-Host  $host;",
 				"}",
@@ -72,11 +69,32 @@ namespace Sungiant.Djinn
 
 	public abstract class NginxLocationBlock
 	{
-		public String Location { get; set; }
-
 		public abstract String[] GetConfig();
+
+		public static NginxLocationBlock CreateFromSpecification(Specification.INginxLocationBlock specification)
+		{
+			Type t = Type.GetType ("Sungiant.Djinn." + specification.Type + ", Sungiant.Djinn");
+
+			Object o = Activator.CreateInstance (t, specification);
+
+			return o as NginxLocationBlock;
+		}
 	}
 
+	public abstract class NginxLocationBlock<T>
+		: NginxLocationBlock
+	where T
+		: Specification.INginxLocationBlock
+	{
+		readonly T specification;
+
+		protected T Specification { get { return specification; } }
+
+		protected NginxLocationBlock (T specification)
+		{
+			this.specification = specification;
+		}
+	}
 
 	public class SslConfig
 	{
@@ -85,33 +103,17 @@ namespace Sungiant.Djinn
 	}
 
 	public class NginxServerBlock
-		: Action
+		: Action<Specification.NginxServerBlock>
 	{
-		public NginxServerBlock(String description) 
-			: base(description)
-		{
-		}
-
-		public String Name { get; set; }
-
-		public String Listen { get; set; }
-		
-		public List<String> VirtualHosts { get; set; }
-
-		public List<String> AllowedEndpoints { get; set; }
-
-		public List<NginxLocationBlock> Locations { get; set; }
-
-		public SslConfig SslConfig { get; set; }
-
-		public String Return { get; set; }
+		public NginxServerBlock(Specification.NginxServerBlock specification, String djinnContext) 
+			: base(specification, djinnContext) {}
 
 		// todo, ssl and certs
-		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment, String localContext)
+		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
 		{
 			LogPerform();
 			
-			string filename = Name + ".conf";
+			string filename = Specification.Name + ".conf";
 			
 			string tempNginxConfigFile = Path.GetTempPath() + "nginx-" + filename;
 
@@ -119,28 +121,28 @@ namespace Sungiant.Djinn
 
 			nginxScript.Add( "server {" );
 
-			if (string.IsNullOrEmpty(Listen))
+			if (string.IsNullOrEmpty(Specification.Listen))
 			{
 				nginxScript.Add ("  listen 80;");
 			}
 			else
 			{
-				nginxScript.Add ("  listen " + Listen + ";");
+				nginxScript.Add ("  listen " + Specification.Listen + ";");
 			}
 
-			if( VirtualHosts != null )
-				nginxScript.Add( "  server_name " + VirtualHosts.Join(" ") + ";" );
+			if (Specification.VirtualHosts != null)
+				nginxScript.Add( "  server_name " + Specification.VirtualHosts.Join(" ") + ";" );
 
-			if (SslConfig != null)
+			if (Specification.SslConfig != null)
 			{
 				nginxScript.Add ("  ssl on;");
-				nginxScript.Add (string.Format("  ssl_certificate {0};", this.SslConfig.Certificate));
-				nginxScript.Add (string.Format("  ssl_certificate_key {0};", this.SslConfig.CertificateKey));
+				nginxScript.Add (string.Format("  ssl_certificate {0};", Specification.SslConfig.Certificate));
+				nginxScript.Add (string.Format("  ssl_certificate_key {0};", Specification.SslConfig.CertificateKey));
 			}
 
-			if( AllowedEndpoints != null )
+			if( Specification.AllowedEndpoints != null )
 			{
-				foreach(var endpoint in AllowedEndpoints)
+				foreach(var endpoint in Specification.AllowedEndpoints)
 				{
 					nginxScript.Add( "  allow " + endpoint +";" );
 				}
@@ -148,18 +150,22 @@ namespace Sungiant.Djinn
 				nginxScript.Add( "  deny all;" );
 			}
 
-			if (!string.IsNullOrEmpty (Return))
+			if (!string.IsNullOrEmpty (Specification.Return))
 			{
-				nginxScript.Add( "  return " + Return + ";" );
+				nginxScript.Add( "  return " + Specification.Return + ";" );
 			}
 
-			if (Locations != null)
+			if (Specification.Locations != null)
 			{
-				foreach (var location in Locations)
+				var locations = Specification.Locations
+					.Select (x => NginxLocationBlock.CreateFromSpecification (x))
+					.ToList ();
+
+				foreach (var location in locations)
 				{
 					var locBlock = location
-					.GetConfig ()
-					.Where (x => !string.IsNullOrEmpty (x));
+						.GetConfig ()
+						.Where (x => !String.IsNullOrEmpty (x));
 
 					foreach (var line in locBlock)
 					{
@@ -171,7 +177,7 @@ namespace Sungiant.Djinn
 			nginxScript.Add( "}" );
 			nginxScript.Add( "" );
 			
-			File.WriteAllText(tempNginxConfigFile, string.Join("\n", nginxScript));
+			File.WriteAllText(tempNginxConfigFile, String.Join("\n", nginxScript));
 			
 			cloudProvider.RunCommand(cloudDeployment, "sudo service " + "nginx stop");
 			
@@ -186,11 +192,10 @@ namespace Sungiant.Djinn
 						tempNginxConfigFile,
 						String.Format("{0}@{1}:{2}", cloudProvider.User, endpoint, filename)
 					}.Join(" "),
-				Console.WriteLine
-				);
+				Console.WriteLine);
 			}
 			
-			cloudProvider.RunCommand(cloudDeployment, "sudo mv "+ filename + " /etc/nginx/sites-enabled/" + Name);
+			cloudProvider.RunCommand(cloudDeployment, "sudo mv "+ filename + " /etc/nginx/sites-enabled/" + Specification.Name);
 			cloudProvider.RunCommand(cloudDeployment, "sudo service "+ "nginx start");
 			cloudProvider.RunCommand(cloudDeployment, "sudo service "+ "nginx status");
 

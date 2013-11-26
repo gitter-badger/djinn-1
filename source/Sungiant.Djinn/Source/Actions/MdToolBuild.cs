@@ -7,47 +7,57 @@ using ServiceStack.Text;
 namespace Sungiant.Djinn
 {
 	public class MdToolBuild
-		: Action
+		: Action<Specification.MdToolBuild>
 	{
-		public MdToolBuild(String description) : base(description) { }
+		public MdToolBuild(Specification.MdToolBuild specification, String djinnContext) 
+			: base(specification, djinnContext) {}
 
-		public String Configuration { get; set; }
-		
-		public String SolutionPath { get; set; }
-
-		public Boolean Verbose { get; set; } 
-		// is this run here or on the remote machine
-		public ActionContext Context { get; set; }
-
-		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment, String localContext)
+		String SolutionPath
 		{
-			LogPerform();
-
-			if(!File.Exists(SolutionPath))
+			get
 			{
-				throw new Exception("Solution file not found.");
+				switch(Context)
+				{
+					case MachineContext.Local: return Path.Combine (DjinnContext, Specification.SolutionPath);
+					case MachineContext.Remote: default: return Specification.SolutionPath;
+				}
+			}
+		}
+
+		MachineContext Context
+		{ 
+			get { return Specification.IsContextRemote ? MachineContext.Remote : MachineContext.Local; }
+		}
+
+		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
+		{
+			LogPerform ();
+
+			if(!File.Exists (SolutionPath))
+			{
+				throw new Exception ("Solution file not found.");
 			}
 
-			string command = "/Applications/Xamarin Studio.app/Contents/MacOS/mdtool";
+			String command = "/Applications/Xamarin Studio.app/Contents/MacOS/mdtool";
 
-			var arguments = new string[]
+			var arguments = new String[]
 			{
 				"build",
-				"\"--counfiguration:" + Configuration + "\"",
-				string.Format("\"{0}\"", SolutionPath)
+				"\"--counfiguration:" + Specification.Configuration + "\"",
+				String.Format("\"{0}\"", SolutionPath)
 			}.Join(" ");
 
-			if( Verbose )
+			if (Specification.Verbose)
 			{
 				arguments = "-v " + arguments;
 			}
 
 			String cmd = command + " " + arguments;
 
-			switch(Context)
+			switch (Context)
 			{
-				case ActionContext.Local: ProcessHelper.Run (cmd, Console.WriteLine); break;
-				case ActionContext.Remote: cloudProvider.RunCommand(cloudDeployment, cmd); break;
+				case MachineContext.Local: ProcessHelper.Run (cmd, Console.WriteLine); break;
+				case MachineContext.Remote: cloudProvider.RunCommand (cloudDeployment, cmd); break;
 			}
 
 		}

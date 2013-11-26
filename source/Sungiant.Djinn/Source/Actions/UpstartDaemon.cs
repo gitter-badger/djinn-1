@@ -9,58 +9,53 @@ using System.IO;
 namespace Sungiant.Djinn
 {
 	public class UpstartDaemon
-		: Action
+		: Action<Specification.UpstartDaemon>
 	{
-		public UpstartDaemon(String description) 
-			: base(description)
-		{
-		}
-		
-		public String DaemonName { get; set; }
-		public List<String> DaemonCommands { get; set; }
+		public UpstartDaemon(Specification.UpstartDaemon specification, String djinnContext) 
+			: base(specification, djinnContext) {}
 
-		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment, String localContext)
+
+		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
 		{
 			LogPerform();
 
-			string filename = DaemonName + ".conf";
+			String filename = Specification.DaemonName + ".conf";
 
-			string tempUpstartJobPath = Path.GetTempPath() + "upstart-" + filename;
+			String tempUpstartJobPath = Path.GetTempPath() + "upstart-" + filename;
 
-			string[] upstartScript = new string[]
+			String[] upstartScript = new String[]
 			{
 				"start on started networking",
 				"stop on shutdown",
 				"respawn",
 				"respawn limit 10 90",
-				string.Format("env CLOUD_DEPLOYMENT_IDENTIFIER=\"{0}\"", cloudDeployment.Identifier.IdentiferTags.First().Value),
-				string.Join("\n", DaemonCommands),
+				String.Format("env CLOUD_DEPLOYMENT_IDENTIFIER=\"{0}\"", cloudDeployment.Identifier.IdentiferTags.First().Value),
+				String.Join("\n", Specification.DaemonCommands),
 				"console output",
 				""
 			};
 
-			File.WriteAllText(tempUpstartJobPath, string.Join("\n", upstartScript));
+			File.WriteAllText(tempUpstartJobPath, String.Join("\n", upstartScript));
 			
-			cloudProvider.RunCommand(cloudDeployment, "sudo service " + DaemonName + " stop");
+			cloudProvider.RunCommand(cloudDeployment, "sudo service " + Specification.DaemonName + " stop");
 
 			foreach( var endpoint in cloudDeployment.Endpoints )
 			{
 				ProcessHelper.Run(
-					new string[]
+					new String[]
 					{
 						"rsync",
 						"-v",
-						string.Format("--rsh \"ssh -o StrictHostKeyChecking=no -i {0}\"", cloudProvider.PrivateKeyPath),
+						String.Format("--rsh \"ssh -o StrictHostKeyChecking=no -i {0}\"", cloudProvider.PrivateKeyPath),
 						tempUpstartJobPath,
-						string.Format("{0}@{1}:{2}", cloudProvider.User, endpoint, filename)
+						String.Format("{0}@{1}:{2}", cloudProvider.User, endpoint, filename)
 					}.Join(" "),
-				Console.WriteLine
-				);
+				Console.WriteLine);
 			}
 
 			cloudProvider.RunCommand(cloudDeployment, "sudo mv " + filename + " /etc/init/" + filename);
-			cloudProvider.RunCommand(cloudDeployment, "sudo service " + DaemonName + " start");
-			cloudProvider.RunCommand(cloudDeployment, "sudo service " + DaemonName + " status");
+			cloudProvider.RunCommand(cloudDeployment, "sudo service " + Specification.DaemonName + " start");
+			cloudProvider.RunCommand(cloudDeployment, "sudo service " + Specification.DaemonName + " status");
 
 		}
 	}

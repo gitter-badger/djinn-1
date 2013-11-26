@@ -7,44 +7,49 @@ using System.IO;
 namespace Sungiant.Djinn
 {
 	public class XBuild
-		: Action
+		: Action<Specification.XBuild>
 	{
-		public XBuild(String description) 
-			: base(description) { }
+		public XBuild (Specification.XBuild specification, String djinnContext) 
+			: base (specification, djinnContext) {}
 
-		public String Configuration { get; set; }
+		String ProjectPath
+		{
+			get
+			{
+				switch(Context)
+				{
+					case MachineContext.Local: return Path.Combine (DjinnContext, Specification.ProjectPath);
+					case MachineContext.Remote: default: return Specification.ProjectPath;
+				}
+			}
+		}
 
-		public String ProjectPath { get; set; }
+		MachineContext Context
+		{ 
+			get { return Specification.IsContextRemote ? MachineContext.Remote : MachineContext.Local; }
+		}
 
-		public String Verbosity  { get; set; }
-
-		// is this run here or on the remote machine
-		public ActionContext Context { get; set; }
-
-		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment, String localContext)
+		public override void Perform (ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
 		{
 			LogPerform();
 
-			String blueprintsDirectory = Path.Combine (localContext, "blueprints");
-			var projFullPath = Path.Combine (blueprintsDirectory, ProjectPath);
-
-			if (string.IsNullOrEmpty (Verbosity))
+			if (string.IsNullOrEmpty (Specification.Verbosity))
 			{
-				Verbosity = "minimal";
+				Specification.Verbosity = "minimal";
 			}
 
 			var command = new string[]
 			{
 				"xbuild",
-				"\"" + projFullPath + "\"",
-				string.Format("/p:Configuration={0}", Configuration),
-				string.Format("/verbosity:{0}", Verbosity)
+				"\"" + ProjectPath + "\"",
+				string.Format("/p:Configuration={0}", Specification.Configuration),
+				string.Format("/verbosity:{0}", Specification.Verbosity)
 			}.Join(" ");
 
 			switch(Context)
 			{
-				case ActionContext.Local: ProcessHelper.Run(command, Console.WriteLine); break;
-				case ActionContext.Remote: cloudProvider.RunCommand(cloudDeployment, command); break;
+				case MachineContext.Local: ProcessHelper.Run(command, Console.WriteLine); break;
+				case MachineContext.Remote: cloudProvider.RunCommand(cloudDeployment, command); break;
 			}
 		}
 	}

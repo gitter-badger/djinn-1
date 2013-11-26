@@ -1,22 +1,22 @@
 using System;
 
-namespace Sungiant.Djinn
+namespace Sungiant.Djinn.Specification
 {
 	/// <summary>
 	/// DeploymentSpecification defines an instance
 	/// of a Blueprint in a Zone.
 	/// </summary>
-	public class DeploymentSpecification
+	public class Deployment
 	{
 		/// <summary>
 		/// Which Zone group should be used.
 		/// </summary>
-		public String ZoneId { get; set; }
+		public String ZoneIdentifier { get; set; }
 
 		/// <summary>
 		/// Which Blueprint should be used.
 		/// </summary>
-		public String BlueprintId { get; set; }
+		public String BlueprintIdentifier { get; set; }
 
 		/// <summary>
 		/// How many many machines?

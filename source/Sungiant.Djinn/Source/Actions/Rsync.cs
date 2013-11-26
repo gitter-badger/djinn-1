@@ -8,109 +8,78 @@ using ServiceStack.Text;
 namespace Sungiant.Djinn
 {
 	public class Rsync
-		: Action
+		: Action<Specification.Rsync>
 	{
-		public Rsync(String description)
-			: base(description)
-		{
-			Delete = true;
-			Verbose = true;
-			Recursive = true;
-		}
+		public Rsync(Specification.Rsync specification, String djinnContext) 
+			: base(specification, djinnContext) {}
 
-		// sets the --delete flag
-		public Boolean Delete { get; set; }
-
-		// sets the -r flag
-		public Boolean Recursive { get; set; }
-		
-		// sets the -v flag
-		public Boolean Verbose { get; set; }
-		
-		// sets the -q flag
-		public Boolean Quiet { get; set; }
-
-		// sets the -c flag
-		public Boolean Checksum { get; set; }
-
-		// sets the -l flag
-		public Boolean Shortcuts { get; set; }
-
-		// sets the --stats flag
-		public Boolean Stats { get; set; }
-
-		public String Source { get; set; }
-
-
-		String GetActualSource(String blueprintsDirectory)
-		{
-			if( SourceContext == ActionContext.Remote )
-			{
-				return Source;
-			}
-			else if( SourceContext == ActionContext.Local )
-			{
-				return Path.Combine(blueprintsDirectory, Source);
-			}
-			else throw new NotSupportedException();
-		}
-
-		public ActionContext SourceContext { get; set; }
-
-		public String Destination { get; set; }
-
-		String GetActualDestination(String blueprintsDirectory)
-		{
-			if( DestinationContext == ActionContext.Remote )
-				return Destination;
-			else if( DestinationContext == ActionContext.Local )
-			{
-				return Path.Combine(blueprintsDirectory, Destination);
-			}
-			else throw new NotSupportedException();
-		}
-
-		public ActionContext DestinationContext { get; set; }
-
-		string[] Arguments
+		String Source
 		{
 			get
 			{
-				var result = new List<string>();
+				switch (SourceContext)
+				{ 
+					case MachineContext.Local: return Path.Combine (DjinnContext, Specification.Source);
+					case MachineContext.Remote: default: return Specification.Source;
+				}
+			}
+		}
+
+		MachineContext SourceContext
+		{
+			get { return Specification.IsSourceContextRemote ? MachineContext.Remote : MachineContext.Local; }
+		}
+
+		String Destination
+		{
+			get
+			{
+				switch (DestinationContext)
+				{ 
+					case MachineContext.Local: return Path.Combine (DjinnContext, Specification.Destination);
+					case MachineContext.Remote: default: return Specification.Destination;
+				}
+			}
+		}
+
+		MachineContext DestinationContext
+		{
+			get { return Specification.IsDestinationContextRemote ? MachineContext.Remote : MachineContext.Local; }
+		}
+
+		String[] Arguments
+		{
+			get
+			{
+				var result = new List<String>();
 				
-				if( Delete ) result.Add("--delete");
-				if( Recursive ) result.Add("-r");
-				if( Verbose ) result.Add("-v");
-				if( Quiet ) result.Add("-q");
-				if( Checksum ) result.Add("-c");
-				if( Shortcuts ) result.Add("-l");
-				if( Stats ) result.Add("--stats");
+				if (Specification.Delete) result.Add("--delete");
+				if (Specification.Recursive) result.Add("-r");
+				if (Specification.Verbose) result.Add("-v");
+				if (Specification.Quiet) result.Add("-q");
+				if (Specification.Checksum) result.Add("-c");
+				if (Specification.Shortcuts) result.Add("-l");
+				if (Specification.Stats) result.Add("--stats");
 
 				return result.ToArray();
 			}
 		}
 
-		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment, String localContext)
+		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
 		{
 			LogPerform();
 
-			String blueprintsDirectory = Path.Combine (localContext, "blueprints");
-
-			String actualSource = GetActualSource(blueprintsDirectory);
-			String actualDestination = GetActualDestination(blueprintsDirectory);
-
-
-			if( SourceContext == ActionContext.Local && DestinationContext == ActionContext.Local )
+			if( SourceContext == MachineContext.Local && DestinationContext == MachineContext.Local )
 			{
 				ProcessHelper.Run(
 					"rsync " +
-					Arguments.Join(" ") + " " + actualSource + " " + actualDestination, 
+					Arguments.Join(" ") + " " + Source + " " + Destination, 
 					Console.WriteLine
 					);
 				return;
 			}
 			
-			if( SourceContext == ActionContext.Remote && DestinationContext == ActionContext.Remote )
+			if( SourceContext == MachineContext.Remote && DestinationContext == MachineContext.Remote )
 			{
 				cloudProvider.RunCommand(
 					cloudDeployment,
@@ -118,43 +87,43 @@ namespace Sungiant.Djinn
 					new string[]
 					{
 						Arguments.Join(" "),
-						actualSource,
-						actualDestination
+						Source,
+						Destination
 					}.Join(" "));
 
 				return;
 			}
 			
-			if( SourceContext == ActionContext.Local && DestinationContext == ActionContext.Remote )
+			if( SourceContext == MachineContext.Local && DestinationContext == MachineContext.Remote )
 			{
 				foreach( var endpoint in cloudDeployment.Endpoints )
 				{
 					ProcessHelper.Run(
-						new string[]
+						new String[]
 						{
 							"rsync",
 							Arguments.Join(" "),
-							string.Format("--rsh \"ssh -o StrictHostKeyChecking=no -i {0}\"", cloudProvider.PrivateKeyPath),
-							actualSource,
-							string.Format("{0}@{1}:{2}", cloudProvider.User, endpoint, actualDestination)
+							String.Format("--rsh \"ssh -o StrictHostKeyChecking=no -i {0}\"", cloudProvider.PrivateKeyPath),
+							Source,
+							String.Format("{0}@{1}:{2}", cloudProvider.User, endpoint, Destination)
 						}.Join(" "), 
 						Console.WriteLine);
 				}
 				return;
 			}
 			
-			if( SourceContext == ActionContext.Remote && DestinationContext == ActionContext.Local )
+			if( SourceContext == MachineContext.Remote && DestinationContext == MachineContext.Local )
 			{
 				foreach( var endpoint in cloudDeployment.Endpoints )
 				{
 					ProcessHelper.Run(
-						new string[]
+						new String[]
 						{
 							"rsync",
 							Arguments.Join(" "),
-							string.Format("--rsh \"ssh -o StrictHostKeyChecking=no -i {0}\"", cloudProvider.PrivateKeyPath),
-							string.Format("{0}@{1}:{2}", cloudProvider.User, endpoint, actualSource),
-							actualDestination
+							String.Format("--rsh \"ssh -o StrictHostKeyChecking=no -i {0}\"", cloudProvider.PrivateKeyPath),
+							String.Format("{0}@{1}:{2}", cloudProvider.User, endpoint, Source),
+							Destination
 						}.Join(" "),
 						Console.WriteLine);
 				}

@@ -143,12 +143,13 @@ namespace Sungiant.Cloud.Aws
 
 			Console.WriteLine("==> Waiting for instances to spin up");
 			List<RunningInstance> instances = null;
-			
+
+			Console.WriteLine(String.Format("==> Querying status of {0} instances", instanceIDs.Count));
+
 			while (true)
 			{
 				try
 				{
-					Console.WriteLine("==> Querying status of {0} instances", instanceIDs.Count);
 					DescribeInstancesResponse statusResponse = client.DescribeInstances(
 						new DescribeInstancesRequest()
 						{
@@ -161,11 +162,9 @@ namespace Sungiant.Cloud.Aws
 
 
 					int numRunning = instances.Count(inst => inst.InstanceState.Name == "running");
-					Console.Write("\r{0} pending {1} running", instances.Count - numRunning, numRunning, instances.Count);
-					
 					if (numRunning == instances.Count)
 					{
-						Console.WriteLine("\r==> All {0} instances are now running.", instanceIDs.Count);
+						Console.WriteLine(String.Format("==> All {0} instances are now running.", instanceIDs.Count));
 						break;
 					}
 				}
@@ -178,33 +177,28 @@ namespace Sungiant.Cloud.Aws
 				Thread.Sleep(4000);
 			}
 
-			Console.WriteLine("==> Ensuring ssh has started");
-			List<string> dnsNames = instances.Select(inst => inst.PublicDnsName).ToList();
-			foreach (string dns in dnsNames)
+			Console.WriteLine("==> Waiting for ssh to start");
+			List<String> dnsNames = instances.Select(inst => inst.PublicDnsName).ToList();
+
+			foreach (String dns in dnsNames)
 			{
+				Console.WriteLine(String.Format("==> Checking port 22 of {0}", dns));
 				while (true)
 				{
-					Console.Write("\r====> Querying port 22 of {0}", dns);
-					
 					var output = new List<String> ();
 
-					ProcessHelper.Run (
-						"nc -zv " + dns + " 22", 
-						output.Add);
+					ProcessHelper.Run (String.Format("nc -zv {0} 22", dns), output.Add);
 
-					if (output.Count > 0 && output[1].Contains("succeeded"))
+					if (output.Count > 0 && output.Any(x => x.Contains("succeeded")))
 					{
 						break;
 					}
 
-					Thread.Sleep (1000);
+					Thread.Sleep (10);
 				}
 			}
 			
-			Console.Write("\r==> Ssh is up for all instances.");
-
-
-		
+			Console.WriteLine("==> Ssh is up.");
 		}
 		
 		const Int32 MaxNumAwsTags = 10;
@@ -346,7 +340,9 @@ namespace Sungiant.Cloud.Aws
 
 			var result1 = response.DescribeInstancesResult.Reservation
 				.SelectMany (a => a.RunningInstance)
-				.Where (b => b.InstanceState.Name != "terminated").ToList();
+				.Where (b => b.InstanceState.Name != "terminated")
+				.Where (b => b.InstanceState.Name != "shutting-down")
+				.ToList();
 				
 			var result2 = result1
 				.GroupBy (GetIdentity).ToList();

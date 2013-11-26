@@ -13,8 +13,8 @@ namespace Sungiant.Djinn
 	{
 		public String SpecificActionGroup { get; set; }
 
-		public DjinnConfigureTask( ICloudProvider cloudProvider, Deployment deployment)
-			: base(Task.Configure, cloudProvider, deployment) {}
+		public DjinnConfigureTask (ICloudProvider cloudProvider, Deployment deployment)
+			: base (Task.Configure, cloudProvider, deployment) {}
 
 		public override void Run()
 		{
@@ -29,9 +29,9 @@ namespace Sungiant.Djinn
 
 					Console.WriteLine("Configure -> " + actionGroup.Description);
 
-					foreach( var action in actionGroup.Actions )
+					foreach (Action action in actionGroup.Actions)
 					{
-						action.Perform(CloudProvider, cd, this.Deployment.LocalContext);
+						action.Perform (CloudProvider, cd);
 					}
 				}
 			}

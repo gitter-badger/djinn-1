@@ -6,30 +6,35 @@ namespace Sungiant.Djinn
 {
 	public class DjinnEnvironment
 	{
-		DjinnEnvironmentSetupData Spec { get; set; }
+		readonly DjinnEnvironmentSetupData setupData;
 
-		public DjinnEnvironment(DjinnEnvironmentSetupData spec)
+		readonly List<Deployment> deployments;
+
+		public DjinnEnvironment(DjinnEnvironmentSetupData specification)
 		{
-			Spec = spec;
+			this.setupData = specification;
 
-			var blueprints = spec.Projects
-				.SelectMany (x => x.BlueprintSpecifications.Select (y => new Blueprint (y)))
-				.ToDictionary (x => x.Id, y => y);
+			var blueprints = this.setupData.Projects
+				.SelectMany (x => x.BlueprintSpecifications.Select (y => new Blueprint (y, x.LocalContext)))
+				.ToDictionary (x => x.Identifier, y => y);
 
-			var zones = spec.Projects
+			var zones = this.setupData.Projects
 				.SelectMany (x => x.ZoneSpecifications.Select (y => new Zone (y)))
-				.ToDictionary (x => x.Id, y => y);
+				.ToDictionary (x => x.Identifier, y => y);
 
-			Deployments = spec.Projects
+			deployments = this.setupData.Projects
 				.SelectMany (x => x.DeploymentSpecifications.Select (y => new Deployment(y, zones, blueprints, x.LocalContext)))
-				.ToList();
+				.ToList ();
 
 		}
 
 		/// <summary>
 		/// All Deployments in the current workgroup.
 		/// </summary>
-		public List<Deployment> Deployments { get; private set; }
+		public List<Deployment> Deployments
+		{
+			get { return deployments; }
+		}
 	}
 }
 

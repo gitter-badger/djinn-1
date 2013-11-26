@@ -13,8 +13,8 @@ namespace Sungiant.Djinn
 	{
 		public String SpecificActionGroup { get; set; }
 
-		public DjinnDeployTask( ICloudProvider cloudProvider, Deployment deployment)
-			: base(Task.Deploy, cloudProvider, deployment) {}
+		public DjinnDeployTask (ICloudProvider cloudProvider, Deployment deployment)
+			: base (Task.Deploy, cloudProvider, deployment) {}
 
 		public override void Run()
 		{
@@ -31,7 +31,7 @@ namespace Sungiant.Djinn
 
 					foreach( var action in actionGroup.Actions )
 					{
-						action.Perform(CloudProvider, cd, this.Deployment.LocalContext);
+						action.Perform(CloudProvider, cd);
 					}
 				}
 			}

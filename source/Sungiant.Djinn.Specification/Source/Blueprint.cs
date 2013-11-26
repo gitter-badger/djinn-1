@@ -1,18 +1,17 @@
 using System;
-using System.Collections.Generic;
 
-namespace Sungiant.Djinn
+namespace Sungiant.Djinn.Specification
 {
 	/// <summary>
 	/// A BlueprintSpecification reperesents a set of 
 	/// instructions for provisioning a machine.
 	/// </summary>
-	public class BlueprintSpecification
+	public class Blueprint
 	{
 		/// <summary>
 		/// A string identifier to represent this blueprint.
 		/// </summary>
-		public String BlueprintId { get; set; }
+		public String BlueprintIdentifier { get; set; }
 
 		/// <summary>
 		/// A human readable description of the purpose of
@@ -23,18 +22,18 @@ namespace Sungiant.Djinn
 		/// <summary>
 		/// Which ports need to be open for this machine.
 		/// </summary>
-		public List<Int32> OpenPorts { get; set; }
+		public Int32[] OpenPorts { get; set; }
 
 		/// <summary>
 		/// Defines what needs to be done to configure the server.
 		/// </summary>
-		public List<ActionGroup> Configure { get; set; }
+		public ActionGroup[] ConfigurationActions { get; set; }
 
 		/// <summary>
 		/// Defines what needs to be done to deploy 
 		/// code / dlls / apps to the server.
 		/// </summary>
-		public List<ActionGroup> Deploy { get; set; }
+		public ActionGroup[] DeploymentActions { get; set; }
 	}
 }
 

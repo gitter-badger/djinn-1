@@ -11,8 +11,8 @@ namespace Sungiant.Djinn
 	public class DjinnSshTask
 		: DjinnTask
 	{
-		public DjinnSshTask( ICloudProvider cloudProvider, Deployment deployment)
-			: base(Task.Ssh, cloudProvider, deployment) {}
+		public DjinnSshTask (ICloudProvider cloudProvider, Deployment deployment)
+			: base (Task.Ssh, cloudProvider, deployment) {}
 
 		public override void Run()
 		{

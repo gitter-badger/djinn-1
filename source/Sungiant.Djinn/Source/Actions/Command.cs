@@ -5,38 +5,36 @@ using Sungiant.Core;
 namespace Sungiant.Djinn
 {
 	public class Command
-		: Action
+		: Action<Specification.Command>
 	{
-		public Command(String description) : base(description)
-		{
-			Value = string.Empty;
+		public Command (Specification.Command specification, String djinnContext) 
+			: base (specification, djinnContext) {}
+	
+		MachineContext Context
+		{ 
+			get { return Specification.IsContextRemote ? MachineContext.Remote : MachineContext.Local; }
 		}
 
-		public ActionContext ActionContext { get; set; }
-
-		public String Value { get; set; }
-
-		public Boolean IgnoreFailure { get; set; }
-
-		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment, String localContext)
+		public override void Perform (ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
 		{
-			LogPerform();
+			LogPerform ();
 
-			switch(ActionContext)
+			switch (Context)
 			{
-				case ActionContext.Local: 
+				case MachineContext.Local: 
 					{
-						Int32 exitCode = ProcessHelper.Run (Value, Console.WriteLine);
+						// todo: this should always be run from the DjinnContext
+						Int32 exitCode = ProcessHelper.Run (Specification.Value, Console.WriteLine);
 
-						if (exitCode != 0 && !IgnoreFailure)
+						if (exitCode != 0 && !Specification.IgnoreFailure)
 						{
 							throw new Exception ("Exited with code " + exitCode);
 						}
 					}
 					break;
-				case ActionContext.Remote: 
+				case MachineContext.Remote: 
 					{
-						cloudProvider.RunCommand (cloudDeployment, Value, IgnoreFailure); 
+						cloudProvider.RunCommand (cloudDeployment, Specification.Value, Specification.IgnoreFailure); 
 					}
 					break;
 			}

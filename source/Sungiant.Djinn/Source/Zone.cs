@@ -4,14 +4,14 @@ namespace Sungiant.Djinn
 {
 	public class Zone
 	{
-		ZoneSpecification spec;
+		readonly Specification.Zone spec;
 		
-		public Zone(ZoneSpecification spec)
+		public Zone(Specification.Zone spec)
 		{
 			this.spec = spec;
 		}
 		
-		public String Id { get { return spec.ZoneId; } }
+		public String Identifier { get { return spec.ZoneIdentifier; } }
 		
 		public String Description { get { return spec.Description; } }
 		

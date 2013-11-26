@@ -12,8 +12,8 @@ namespace Sungiant.Djinn
 	public class DjinnDescribeTask
 		: DjinnTask
 	{
-		public DjinnDescribeTask( ICloudProvider cloudProvider, Deployment deployment)
-			: base(Task.Describe, cloudProvider, deployment) {}
+		public DjinnDescribeTask (ICloudProvider cloudProvider, Deployment deployment)
+			: base (Task.Describe, cloudProvider, deployment) {}
 
 		public override void Run()
 		{

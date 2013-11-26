@@ -7,7 +7,7 @@ namespace Sungiant.Djinn
 {
 	public class Deployment
 	{
-		DeploymentSpecification Spec { get; set; }
+		Specification.Deployment Spec { get; set; }
 
 		/// <summary>
 		/// The directory from which local commands in this blueprint are relative to.
@@ -15,15 +15,15 @@ namespace Sungiant.Djinn
 		readonly String localContext;
 		
 		public Deployment(
-			DeploymentSpecification spec, 
+			Specification.Deployment spec, 
 			Dictionary<String, Zone> deploymentGroups,
 			Dictionary<String, Blueprint> machineBlueprints,
 			String localContext)
 		{
 			this.Spec = spec;
 			this.localContext = localContext;
-			this.DeploymentGroup = deploymentGroups[spec.ZoneId];
-			this.Blueprint = machineBlueprints[spec.BlueprintId];
+			this.DeploymentGroup = deploymentGroups[spec.ZoneIdentifier];
+			this.Blueprint = machineBlueprints[spec.BlueprintIdentifier];
 
 			Identity = new CloudDeploymentIdentity()
 			{
@@ -32,7 +32,7 @@ namespace Sungiant.Djinn
 					new CloudDeploymentIdentifierTag()
 					{
 						Name = "DeploymentId",
-						Value = Id
+						Value = Identifier
 					},
 				},
 				IdentiferTagGroups = new List<CloudDeploymentIdentifierTagGroup>()
@@ -44,12 +44,12 @@ namespace Sungiant.Djinn
 							new CloudDeploymentIdentifierTag()
 							{
 								Name = "ZoneId",
-								Value = DeploymentGroup.Id
+								Value = DeploymentGroup.Identifier
 							},
 							new CloudDeploymentIdentifierTag()
 							{
 								Name = "BlueprintId",
-								Value = Blueprint.Id
+								Value = Blueprint.Identifier
 							}
 						}
 					}
@@ -76,7 +76,7 @@ namespace Sungiant.Djinn
 
 		public CloudDeploymentIdentity Identity { get; private set; }
 
-		String Id { get { return DeploymentGroup.Id + " (" + Blueprint.Id + ")"; } }
+		String Identifier { get { return DeploymentGroup.Identifier + " (" + Blueprint.Identifier + ")"; } }
 		
 		public Int32 HorizontalScale { get { return Spec.HorizontalScale; } }
 		
