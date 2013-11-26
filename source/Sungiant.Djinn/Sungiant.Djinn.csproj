@@ -50,17 +50,21 @@
     <Compile Include="Source\Tasks\DjinnDescribeTask.cs" />
     <Compile Include="Source\Tasks\DjinnProvisionTask.cs" />
     <Compile Include="Source\Tasks\DjinnSshTask.cs" />
-    <Compile Include="Source\Task.cs" />
     <Compile Include="Source\Actions\UpstartDaemon.cs" />
     <Compile Include="Source\Actions\NginxServerBlock.cs" />
     <Compile Include="Source\DjinnEnvironmentSetupData.cs" />
     <Compile Include="Source\Zone.cs" />
-    <Compile Include="Source\Action.cs" />
     <Compile Include="Source\ActionGroup.cs" />
     <Compile Include="Source\Blueprint.cs" />
     <Compile Include="Source\Deployment.cs" />
     <Compile Include="Source\DjinnEnvironment.cs" />
     <Compile Include="Source\MachineContext.cs" />
+    <Compile Include="Source\Actions\NginxLocationBlocks\ReturnLocationBlock.cs" />
+    <Compile Include="Source\Actions\NginxLocationBlocks\StaticLocationBlock.cs" />
+    <Compile Include="Source\Actions\NginxLocationBlocks\ProxyPassLocationBlock.cs" />
+    <Compile Include="Source\Actions\NginxLocationBlocks\NginxLocationBlock.cs" />
+    <Compile Include="Source\Actions\Action.cs" />
+    <Compile Include="Source\Tasks\Task.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -68,6 +72,7 @@
     <Folder Include="Source\" />
     <Folder Include="Source\Actions\" />
     <Folder Include="Source\Tasks\" />
+    <Folder Include="Source\Actions\NginxLocationBlocks\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="djinn" />
