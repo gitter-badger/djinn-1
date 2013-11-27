@@ -103,6 +103,8 @@ namespace Sungiant.Djinn
 				.Select (x => x + supportedExtensions.Find(y => File.Exists(Path.Combine(directory, x + y))))
 				// deserialise the chosen file
 				.Select(x => FromFile<T>(Path.Combine(directory, x)))
+				// filter out acceptable error case
+				.Where(x => x != null)
 				// and return
 				.ToList();
 
@@ -115,6 +117,12 @@ namespace Sungiant.Djinn
 				throw new Exception ("Failed to find file: " + file);
 
 			String allText = file.ReadAllText ();
+
+			if (string.IsNullOrWhiteSpace (allText))
+			{
+				return null;
+			}
+
 			T spec = null;
 			String ext = Path.GetExtension (file).ToLower();
 

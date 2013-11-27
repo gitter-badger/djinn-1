@@ -2,6 +2,11 @@ using System;
 
 namespace Sungiant.Djinn.Specification
 {
+	public class ActionGroupContainer
+	{
+		public ActionGroup[] ActionGroups { get; set; }
+	}
+
 	/// <summary>
 	/// A BlueprintSpecification reperesents a set of 
 	/// instructions for provisioning a machine.
@@ -27,13 +32,13 @@ namespace Sungiant.Djinn.Specification
 		/// <summary>
 		/// Defines what needs to be done to configure the server.
 		/// </summary>
-		public ActionGroup[] ConfigurationActions { get; set; }
+		public ActionGroupContainer Configuration { get; set; }
 
 		/// <summary>
 		/// Defines what needs to be done to deploy 
 		/// code / dlls / apps to the server.
 		/// </summary>
-		public ActionGroup[] DeploymentActions { get; set; }
+		public ActionGroupContainer Deployment { get; set; }
 	}
 }
 

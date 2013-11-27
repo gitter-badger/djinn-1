@@ -28,11 +28,11 @@ namespace Sungiant.Djinn
 					.ToList()
 			};
 
-			if (specification.ConfigurationActions != null)
-				this.configurationActions = this.specification.ConfigurationActions.Select( x => new ActionGroup(x, djinnContext)).ToList();
+			if (specification.Configuration.ActionGroups != null)
+				this.configurationActions = this.specification.Configuration.ActionGroups.Select( x => new ActionGroup(x, djinnContext)).ToList();
 
-			if (specification.DeploymentActions != null)
-				this.deploymentActions = this.specification.DeploymentActions.Select( x => new ActionGroup(x, djinnContext)).ToList();
+			if (specification.Deployment.ActionGroups != null)
+				this.deploymentActions = this.specification.Deployment.ActionGroups.Select( x => new ActionGroup(x, djinnContext)).ToList();
 		}
 
 		public String Identifier { get { return specification.BlueprintIdentifier; } }

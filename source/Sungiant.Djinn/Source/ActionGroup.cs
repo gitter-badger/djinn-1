@@ -11,9 +11,9 @@ namespace Sungiant.Djinn
 		readonly Specification.ActionGroup specification;
 		readonly List<Action> actions;
 
-		public String Name
+		public String Identifier
 		{
-			get { return specification.Name; }
+			get { return specification.ActionGroupIdentifier; }
 		}
 
 		public String Description

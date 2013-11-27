@@ -24,7 +24,7 @@ namespace Sungiant.Djinn
 			{
 				foreach( var actionGroup in Deployment.Blueprint.Configure )
 				{
-					if(SpecificActionGroup != null && SpecificActionGroup != actionGroup.Name)
+					if(SpecificActionGroup != null && SpecificActionGroup != actionGroup.Identifier)
 						continue;
 
 					Console.WriteLine("Configure -> " + actionGroup.Description);
