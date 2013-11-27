@@ -35,7 +35,7 @@ namespace Sungiant.Cloud
 		
 		public Boolean Equals(CloudDeploymentIdentity other)
 		{
-			if( other == null)
+			if( (Object) other == null)
 				return false;
 				
 			return other == this;
