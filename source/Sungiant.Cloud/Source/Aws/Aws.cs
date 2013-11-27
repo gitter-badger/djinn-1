@@ -98,7 +98,7 @@ namespace Sungiant.Cloud.Aws
 		{
 			// we can't ignore failures if we batch up an array of commands,
 			// so debatch them if required.
-			if (ignoreFailures && commands.Count > 1)
+			if (ignoreFailures && commands.Length > 1)
 				foreach (String command in commands)
 					RunCommands (deployment, new String[]{ command }, ignoreFailures);
 
