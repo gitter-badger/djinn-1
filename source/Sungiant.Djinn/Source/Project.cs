@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 
 namespace Sungiant.Djinn
 {
@@ -18,7 +19,7 @@ namespace Sungiant.Djinn
 			this.setupData = setupData;
 
 			var blueprints = this.setupData.BlueprintSpecifications
-				.Select (y => new Blueprint (y, LocalContext))
+				.Select (y => new Blueprint (y, Path.Combine (LocalContext, "blueprints")))
 				.ToDictionary (x => x.Identifier, y => y);
 
 			var zones = this.setupData.ZoneSpecifications
@@ -26,7 +27,7 @@ namespace Sungiant.Djinn
 				.ToDictionary (x => x.Identifier, y => y);
 
 			deployments = this.setupData.DeploymentSpecifications
-				.Select (x => new Deployment (x, zones, blueprints, LocalContext))
+				.Select (x => new Deployment (x, zones, blueprints))
 				.ToList ();
 		}
 	}

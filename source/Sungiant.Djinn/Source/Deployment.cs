@@ -8,20 +8,13 @@ namespace Sungiant.Djinn
 	public class Deployment
 	{
 		Specification.Deployment Spec { get; set; }
-
-		/// <summary>
-		/// The directory from which local commands in this blueprint are relative to.
-		/// </summary>
-		readonly String localContext;
 		
 		public Deployment(
 			Specification.Deployment spec, 
 			Dictionary<String, Zone> deploymentGroups,
-			Dictionary<String, Blueprint> machineBlueprints,
-			String localContext)
+			Dictionary<String, Blueprint> machineBlueprints)
 		{
 			this.Spec = spec;
-			this.localContext = localContext;
 			this.DeploymentGroup = deploymentGroups[spec.ZoneIdentifier];
 			this.Blueprint = machineBlueprints[spec.BlueprintIdentifier];
 
@@ -82,8 +75,6 @@ namespace Sungiant.Djinn
 		
 		public Int32 VerticalScale { get { return Spec.VerticalScale; } }
 
-		public String LocalContext { get { return localContext; }}
-		
 		public override String ToString ()
 		{
 			return String.Format ("[Deployment: Blueprint={0}, DeploymentGroup={1}, Identity={2}, HorizontalScale={3}, VerticalScale={4}]", Blueprint, DeploymentGroup, Identity, HorizontalScale, VerticalScale);
