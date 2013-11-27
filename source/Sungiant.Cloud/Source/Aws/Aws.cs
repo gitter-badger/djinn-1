@@ -96,15 +96,20 @@ namespace Sungiant.Cloud.Aws
 
 		public void RunCommands(ICloudDeployment deployment, String[] commands, Boolean ignoreFailures)
 		{
+			// we can't ignore failures if we batch up an array of commands,
+			// so debatch them if required.
+			if (ignoreFailures && commands.Count > 1)
+				foreach (String command in commands)
+					RunCommands (deployment, new String[]{ command }, ignoreFailures);
+
 			foreach (var endpoint in deployment.Endpoints)
 			{
 				commands = commands
-					.Where (x => !string.IsNullOrEmpty (x))
+					.Where (x => !String.IsNullOrEmpty (x))
 					.Select (x => x.Replace ("\"", "\\\""))
 					.ToArray ();
 
-				string command = string.Format ("\"{0}\"", string.Join ("; ", commands));
-				;
+				String command = String.Format ("\"{0}\"", String.Join ("; ", commands));
 
 				Int32 exitCode = ProcessHelper.Run (
 					new String[]
@@ -113,7 +118,7 @@ namespace Sungiant.Cloud.Aws
 						"-o StrictHostKeyChecking=no",
 						"-i", 
 						PrivateKeyPath,
-						string.Format ("{0}@{1}", User, endpoint),
+						String.Format ("{0}@{1}", User, endpoint),
 						command 
 					}.Join (" "),
 					Console.WriteLine);

@@ -19,13 +19,13 @@ namespace Sungiant.Djinn
 		{
 			LogPerform ();
 
-			foreach (String val in Specification.Values)
+			switch (Context)
 			{
-				switch (Context)
-				{
-					case MachineContext.Local: 
+				case MachineContext.Local: 
+					{
+						// todo: this should always be run from the DjinnContext
+						foreach (String val in Specification.Values)
 						{
-							// todo: this should always be run from the DjinnContext
 							Int32 exitCode = ProcessHelper.Run (val, Console.WriteLine);
 
 							if (exitCode != 0 && !Specification.IgnoreFailure)
@@ -33,13 +33,13 @@ namespace Sungiant.Djinn
 								throw new Exception ("Exited with code " + exitCode);
 							}
 						}
-						break;
-					case MachineContext.Remote: 
-						{
-							cloudProvider.RunCommand (cloudDeployment, val, Specification.IgnoreFailure); 
-						}
-						break;
-				}
+					}
+					break;
+				case MachineContext.Remote: 
+					{
+						cloudProvider.RunCommands (cloudDeployment, Specification.Values, Specification.IgnoreFailure); 
+					}
+					break;
 			}
 		}
 	}
