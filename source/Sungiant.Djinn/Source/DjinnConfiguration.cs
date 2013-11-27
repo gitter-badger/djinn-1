@@ -35,7 +35,7 @@ namespace Sungiant.Djinn
 		/// </summary>
 		public class ProjectConfiguration
 		{
-			public String Name { get; set; }
+			public String ProjectIdentifier { get; set; }
 			public String DjinnDirectory { get; set; }
 
 			public String BlueprintsDirectory { get { return Path.Combine (DjinnDirectory, "blueprints"); } }
@@ -48,7 +48,7 @@ namespace Sungiant.Djinn
 		/// </summary>
 		public class Workgroup
 		{
-			public String Name { get; set; }
+			public String WorkgroupIdentifier { get; set; }
 			public List<ProjectConfiguration> ProjectConfigurations { get; set; }
 		}
 

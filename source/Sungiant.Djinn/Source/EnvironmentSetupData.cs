@@ -3,8 +3,20 @@ using System.Collections.Generic;
 
 namespace Sungiant.Djinn
 {
-	public class DjinnEnvironmentSetupData
+	public class EnvironmentSetupData
 	{
+		public EnvironmentSetupData (String workgroupName)
+		{
+			this.workgroupName = workgroupName;
+		}
+
+		readonly String workgroupName;
+		readonly List<ProjectSetupData> projects = new List<ProjectSetupData>();
+
+		public List<ProjectSetupData> ProjectSetupDatas { get { return projects; } }
+
+		public String WorkgroupName { get { return this.workgroupName; } }
+
 		public void AddProject (
 			String localContext,
 			List<Specification.Blueprint> blueprintSpecifications,
@@ -12,7 +24,7 @@ namespace Sungiant.Djinn
 			List<Specification.Zone> zoneSpecifications)
 		{
 			projects.Add (
-				new Project()
+				new ProjectSetupData()
 				{
 					LocalContext = localContext,
 					BlueprintSpecifications = blueprintSpecifications,
@@ -20,19 +32,6 @@ namespace Sungiant.Djinn
 					ZoneSpecifications = zoneSpecifications
 				});
 		}
-
-		public class Project
-		{
-			public String LocalContext { get; set; }
-
-			public List<Specification.Blueprint> BlueprintSpecifications { get; set; }
-			public List<Specification.Deployment> DeploymentSpecifications { get; set; }
-			public List<Specification.Zone> ZoneSpecifications { get; set; }
-		}
-
-		readonly List<Project> projects = new List<Project>();
-
-		public List<Project> Projects { get { return projects; } }
 	}
 }
 

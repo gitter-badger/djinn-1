@@ -184,9 +184,9 @@ namespace Sungiant.Djinn
 
 			InitiliseCloudProvider();
 
-			Console.WriteLine ("Active Workgroup: " + DjinnConfiguration.Instance.ActiveWorkgroup.Name);
+			Console.WriteLine ("Active Workgroup: " + DjinnConfiguration.Instance.ActiveWorkgroup.WorkgroupIdentifier);
 
-			var environmentSetupData = new DjinnEnvironmentSetupData ();
+			var environmentSetupData = new EnvironmentSetupData (DjinnConfiguration.Instance.ActiveWorkgroup.WorkgroupIdentifier);
 
 			foreach (var projectConfig in DjinnConfiguration.Instance.ActiveWorkgroup.ProjectConfigurations)
 			{
@@ -290,7 +290,9 @@ namespace Sungiant.Djinn
 			OptionSet.Parse (args);
 
 			// make sure the deployment we want to talk to exists
-			var deployment = DjinnEnvironment.Deployments
+			var deployment = DjinnEnvironment.Projects
+				.SelectMany(x => x.Deployments)
+				.ToList()
 				.Find (x => (x.DeploymentGroup.Identifier == deploymentGroupIdentifier && x.Blueprint.Identifier == machineBlueprintIdentifier));
 
 			if (deployment == null)
@@ -321,28 +323,35 @@ namespace Sungiant.Djinn
 			}
 			
 			Console.WriteLine ("Actions:\n  " + string.Join("\n  ", Enum.GetNames(typeof(Task))).ToLower()+ "\n");
-			
-			Console.WriteLine("Deployments:");
-			
-			foreach (var deployment in DjinnEnvironment.Deployments)
+
+
+			foreach (var project in DjinnEnvironment.Projects)
 			{
-				Console.WriteLine(deployment.Identity);
+				Console.WriteLine("Project: " + project.LocalContext );
+				Console.WriteLine ("");
 				
-				//var endpoints = CloudProvider.GetEndpoints(
-				//	deployment.DeploymentGroup.Id,
-				//	deployment.Blueprint.Id);
-				
-				//if( endpoints.Count != deployment.HorizontalScale )
-				//{
-				//	Console.WriteLine(string.Format("    - {0}/{1} endpoints", endpoints.Count, deployment.HorizontalScale ));
-				//}
-				//else
-				//{
-				//	endpoints.ForEach( x => Console.WriteLine("    - " + x + "\n"));
-				//}
+				foreach (var deployment in project.Deployments)
+				{
+					Console.WriteLine("    + " + deployment.Identity);
+					
+					//var endpoints = CloudProvider.GetEndpoints(
+					//	deployment.DeploymentGroup.Id,
+					//	deployment.Blueprint.Id);
+					
+					//if( endpoints.Count != deployment.HorizontalScale )
+					//{
+					//	Console.WriteLine(string.Format("    - {0}/{1} endpoints", endpoints.Count, deployment.HorizontalScale ));
+					//}
+					//else
+					//{
+					//	endpoints.ForEach( x => Console.WriteLine("    - " + x + "\n"));
+					//}
+				}
+				Console.WriteLine ("");
 			}
-			
+
 			Console.WriteLine ("");
+			Console.WriteLine ("Cloud Provider Status:");
 
 			CloudProvider.PrintStatus();
 			
