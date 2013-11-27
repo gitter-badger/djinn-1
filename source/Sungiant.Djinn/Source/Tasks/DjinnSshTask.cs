@@ -34,6 +34,7 @@ namespace Sungiant.Djinn
 						"ssh",
 						"-i", 
 						CloudProvider.PrivateKeyPath,
+						"-o StrictHostKeyChecking=no",
 						CloudProvider.User + "@" + cd.Endpoints[machineIndex]
 					}.Join(" ")
 				);
