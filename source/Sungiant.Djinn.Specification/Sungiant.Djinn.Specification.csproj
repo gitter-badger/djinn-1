@@ -46,6 +46,7 @@
     <Compile Include="Source\Actions\XBuild.cs" />
     <Compile Include="Source\Zone.cs" />
     <Compile Include="Source\IAction.cs" />
+    <Compile Include="Source\Actions\Commands.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

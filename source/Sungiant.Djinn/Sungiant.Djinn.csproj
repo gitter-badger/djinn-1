@@ -65,6 +65,7 @@
     <Compile Include="Source\Actions\NginxLocationBlocks\NginxLocationBlock.cs" />
     <Compile Include="Source\Actions\Action.cs" />
     <Compile Include="Source\Tasks\Task.cs" />
+    <Compile Include="Source\Actions\Commands.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
