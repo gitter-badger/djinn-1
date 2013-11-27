@@ -1,0 +1,6 @@
+{
+    "ZoneIdentifier": "example-zone",
+    "HorizontalScale": 1,
+    "BlueprintIdentifier": "nginx-box",
+    "VerticalScale": 1
+}

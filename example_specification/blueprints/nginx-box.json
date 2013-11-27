@@ -1,0 +1,97 @@
+{
+    "BlueprintIdentifier": "nginx-box",
+    "Description": "Example blueprint for a machine running Nginx.",
+    "OpenPorts":
+    [
+        22,
+        80
+    ],
+    "Configuration":
+    {
+        "ActionGroups":
+        [
+            {
+                "ActionGroupIdentifier": "software",
+                "Description": "Software Installation",
+                "Actions":
+                [
+                    {
+                        "Type": "Command",
+                        "Description": "Update aptitude's package manifest",
+                        "IsContextRemote": true,
+                        "IgnoreFailure": false,
+                        "Value": "sudo apt-get update"
+                    },
+                    {
+                        "Type": "AptitudeInstallation",
+                        "Description": "Install nginx",
+                        "PackageNames":
+                        [
+                            "nginx"
+                        ]
+                    },
+                    {
+                        "Type": "Commands",
+                        "Description": "Remove the default nginx symlinks",
+                        "IsContextRemote": true,
+                        "IgnoreFailure": false,
+                        "Values":
+                        [
+                            "sudo rm -f /etc/nginx/sites-enabled/default",
+                            "sudo rm -f /etc/nginx/sites-available/default"
+                        ]
+                    },
+                    {
+                        "Type": "AptitudeInstallation",
+                        "Description": "Install system utilities",
+                        "PackageNames":
+                        [
+                            "nmon",
+                            "htop"
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Deployment":
+    {
+        "ActionGroups":
+        [
+            {
+                "ActionGroupIdentifier": "clean",
+                "Description": "clean out nginx sites",
+                "Actions":
+                [
+                    {
+                        "Type": "Command",
+                        "Description": "Remove all nginx sites-enabled",
+                        "IsContextRemote": true,
+                        "IgnoreFailure": false,
+                        "Value": "sudo rm -f /etc/nginx/sites-enabled/*"
+                    }
+                ]
+            },
+            {
+                "ActionGroupIdentifier": "default-server",
+                "Description": "Default Nginx Server",
+                "Actions":
+                [
+                    {
+                        "Type": "NginxServerBlock",
+                        "Name": "default-http",
+                        "Listen": "80",
+                        "Locations":
+                        [
+                            {
+                                "Type": "ReturnLocationBlock",
+                                "Location": "/",
+                                "Return": "200"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}
