@@ -33,7 +33,7 @@ so that it contains the AWS credentials you want to use.
 
 Now run:
 
-    ./scripts/install_djinn_aws_credentials
+    sh scripts/install_djinn_aws_credentials
 
 This generates the file:
 
