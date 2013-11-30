@@ -1,3 +1,5 @@
+<img src="logo.jpg" width="96px"/>
+
 Getting Started
 ===============
 
@@ -47,7 +49,7 @@ to examine your machines.
 
 
 Example: CPU Miner
-==================
+------------------
 
 To spin up then shutdown a machine first edit:
 
