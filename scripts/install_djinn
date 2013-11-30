@@ -37,7 +37,7 @@ if [ ! -f $HOME/.djinn ]; then
     echo "            [" >> $HOME/.djinn
     echo "                {" >> $HOME/.djinn
     echo "                    \"Name\":\"example_project\"" >> $HOME/.djinn
-    echo "                    \"DjinnDirectory\":\"/Users/ash/sungiant/example_project_dir/djinn/\"" >> $HOME/.djinn
+    echo "                    \"DjinnDirectory\":\"~/djinn/example_project_dir/djinn/\"" >> $HOME/.djinn
     echo "                }" >> $HOME/.djinn
     echo "            ]" >> $HOME/.djinn
     echo "        }" >> $HOME/.djinn

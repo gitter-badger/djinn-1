@@ -1,135 +1,72 @@
-Installation
-============
+Getting Started
+===============
 
-To install run:
+To install Djinn, download the repository.  For the purposes of this guide lets assume you have cloned the repository to:
 
-    ./scripts/install_djinn
+    ~/djinn/
 
-Then edit:
+Now run:
 
-    /scripts/install_djinn_aws_credentials
+    sh ~/djinn/scripts/install_djinn
+
+This generates the file:
+
+   ~/.djinn
+
+which is responsible for defining where your djinn projects exist.  If you look at it:
+
+    cat ~/.djinn
+
+you can see that a default project has been set up to use the example specifications in your clone of the djinn repository:
+
+    ~/djinn/example_specification/
+
+Next edit:
+
+    ~/djinn/scripts/install_djinn_aws_credentials
 
 so that it contains the AWS credentials you want to use.
 
-Then run:
+Now run:
 
     ./scripts/install_djinn_aws_credentials
 
+This generates the file:
+
+   ~/.djinn.aws
+
+which contains your AWS access crendentials.
+
+Now you should be able to run:
+
+    djinn endpoints
+
+to examine your machines.
 
 
-Example configuation:
+Example: CPU Miner
+==================
 
-### /example_project_dir/djinn/blueprints/nginx-box.json
+To spin up then shutdown a machine first edit:
 
-    {
-        "BlueprintIdentifier": "nginx-box",
-        "Description": "Example blueprint for a machine running Nginx.",
-        "OpenPorts":
-        [
-            22,
-            80
-        ],
-        "ConfigurationActions":
-        [
-            {
-                "Name": "software",
-                "Description": "Software Installation",
-                "Actions":
-                [
-                    {
-                        "Type": "Command",
-                        "Description": "Update aptitude's package manifest",
-                        "IsContextRemote": true,
-                        "IgnoreFailure": false,
-                        "Value": "sudo apt-get update"
-                    },
-                    {
-                        "Type": "AptitudeInstallation",
-                        "Description": "Install nginx",
-                        "PackageNames":
-                        [
-                            "nginx"
-                        ]
-                    },
-                    {
-                        "Type": "Command",
-                        "Description": "Remove the default nginx site enabled symlink",
-                        "IsContextRemote": true,
-                        "IgnoreFailure": false,
-                        "Value": "sudo rm -f /etc/nginx/sites-enabled/default"
-                    },
-                    {
-                        "Type": "Command",
-                        "Description": "Remove the default nginx site available symlink",
-                        "IsContextRemote": true,
-                        "IgnoreFailure": false,
-                        "Value": "sudo rm -f /etc/nginx/sites-available/default"
-                    },
-                    {
-                        "Type": "AptitudeInstallation",
-                        "Description": "Install system utilities",
-                        "PackageNames":
-                        [
-                            "nmon",
-                            "htop"
-                        ]
-                    }
-                ]
-            }
-        ],
-        "DeploymentActions":
-        [
-            {
-                "Name": "clean",
-                "Description": "clean out nginx sites",
-                "Actions":
-                [
-                    {
-                        "Type": "Command",
-                        "Description": "Remove all nginx sites-enabled",
-                        "IsContextRemote": true,
-                        "IgnoreFailure": false,
-                        "Value": "sudo rm -f /etc/nginx/sites-enabled/*"
-                    }
-                ]
-            },
-            {
-                "Name": "default-server",
-                "Description": "Default Nginx Server",
-                "Actions":
-                [
-                    {
-                        "Type": "NginxServerBlock",
-                        "Name": "default-http",
-                        "Listen": "80",
-                        "Locations":
-                        [
-                            {
-                                "Type": "ReturnLocationBlock",
-                                "Location": "/",
-                                "Return": "200"
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    }
+    ~/djinn/example_specification/blueprints/cpuminer.json
 
-### /example_project_dir/djinn/deployments/test-zone|nginx-box.json
+so that it references the login details for one of your scrypt mining workers.
 
-    {
-        "ZoneId": "test-zone",
-        "HorizontalScale": 1,
-        "BlueprintId": "nginx-box",
-        "VerticalScale": 1
-    }
+Now to spin up the machine run:
 
+    djinn provision example-zone cpuminer
 
-### /example_project_dir/djinn/zones/test-zone.json
+Next we need to install the software:
 
-    {
-        "ZoneId": "test-zone",
-        "Description": "A zone used for testing."
-    }
+    djinn configure example-zone cpuminer
+
+Now we need to get things running:
+
+    djinn deploy example-zone cpuminer
+
+Now to shutdown:
+
+    djinn destroy example-zone cpuminer
+
 
