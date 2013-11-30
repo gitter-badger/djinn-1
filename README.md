@@ -5,6 +5,8 @@ To install Djinn, download the repository.  For the purposes of this guide lets 
 
     ~/djinn/
 
+Djinn run on mono, to build it you need the [Mono SDK](http://www.go-mono.com/mono-downloads/download.html) installed.
+
 Now run:
 
     sh ~/djinn/scripts/install_djinn
