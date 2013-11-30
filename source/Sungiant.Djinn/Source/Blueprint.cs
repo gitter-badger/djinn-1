@@ -22,7 +22,7 @@ namespace Sungiant.Djinn
 			this.securityGroup = new CloudSecurityGroup()
 			{
 				Name = this.specification.BlueprintIdentifier,
-				Description = this.specification.Description,
+				Description = this.specification.Description ?? this.specification.BlueprintIdentifier,
 				Rules = this.specification.OpenPorts
 					.Select(x => new CloudSecurityGroupRule() { Mode = CloudSecurityGroupRule.TransportMode.TCP, Port = x })
 					.ToList()

@@ -19,6 +19,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <Commandlineparameters>deploy example-zone cpuminer</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -41,7 +42,6 @@
     <Compile Include="Source\Actions\Command.cs" />
     <Compile Include="Source\Actions\Rsync.cs" />
     <Compile Include="Source\Actions\Scp.cs" />
-    <Compile Include="Source\Actions\AptitudeInstallation.cs" />
     <Compile Include="Source\DjinnTask.cs" />
     <Compile Include="Source\Tasks\DjinnConfigureTask.cs" />
     <Compile Include="Source\Tasks\DjinnDestroyTask.cs" />
@@ -67,6 +67,7 @@
     <Compile Include="Source\Project.cs" />
     <Compile Include="Source\ProjectSetupData.cs" />
     <Compile Include="Source\EnvironmentSetupData.cs" />
+    <Compile Include="Source\Actions\Aptitude.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

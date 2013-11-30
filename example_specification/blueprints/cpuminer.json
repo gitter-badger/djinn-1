@@ -1,0 +1,65 @@
+{
+    "BlueprintIdentifier": "cpuminer",
+    "OpenPorts":
+    [
+        22
+    ],
+    "Configuration":
+    {
+        "ActionGroups":
+        [
+            {
+                "ActionGroupIdentifier": "software",
+                "Actions":
+                [
+                    {
+                        "Type": "Aptitude",
+                        "RunUpdate": true,
+                        "Install":
+                        [
+                            "nmon",
+                            "htop",
+                            "build-essential",
+                            "libcurl4-openssl-dev"
+                        ]
+                    },
+                    {
+                        "Type": "Commands",
+                        "IsContextRemote": true,
+                        "Values":
+                        [
+                            "rm -r -f cpuminer*",
+                            "rm -f pooler-cpuminer-2.3.2.tar.gz",
+                            "wget http://sourceforge.net/projects/cpuminer/files/pooler-cpuminer-2.3.2.tar.gz",
+                            "tar xzf pooler-cpuminer-2.3.2.tar.gz",
+                            "cd cpuminer-2.3.2",
+                            "sh configure CFLAGS='-O3'",
+                            "make",
+                            "sudo make install"
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Deployment":
+    {
+        "ActionGroups":
+        [
+            {
+                "ActionGroupIdentifier": "software",
+                "Actions":
+                [
+                    {
+                        "Type": "UpstartDaemon",
+                        "DaemonName":"cpuminerd",
+                        "DaemonCommands":
+                        [
+                            "exec minerd --algo=scrypt --url=stratum+tcp://example.com:3333 --user=user --pass=password"
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

@@ -16,18 +16,14 @@
                 "Actions":
                 [
                     {
-                        "Type": "Command",
-                        "Description": "Update aptitude's package manifest",
-                        "IsContextRemote": true,
-                        "IgnoreFailure": false,
-                        "Value": "sudo apt-get update"
-                    },
-                    {
-                        "Type": "AptitudeInstallation",
-                        "Description": "Install nginx",
-                        "PackageNames":
+                        "Type": "Aptitude",
+                        "Description": "Install packages",
+                        "RunUpdate": true,
+                        "Install":
                         [
-                            "nginx"
+                            "nginx",
+                            "nmon",
+                            "htop"
                         ]
                     },
                     {
@@ -39,15 +35,6 @@
                         [
                             "sudo rm -f /etc/nginx/sites-enabled/default",
                             "sudo rm -f /etc/nginx/sites-available/default"
-                        ]
-                    },
-                    {
-                        "Type": "AptitudeInstallation",
-                        "Description": "Install system utilities",
-                        "PackageNames":
-                        [
-                            "nmon",
-                            "htop"
                         ]
                     }
                 ]
@@ -88,6 +75,32 @@
                                 "Location": "/",
                                 "Return": "200"
                             }
+                        ]
+                    }
+                ]
+            },
+            {
+                "ActionGroupIdentifier": "configure-rsyslog",
+                "Description": "Configuring rsyslog",
+                "Actions":
+                [
+                    {
+                        "Type": "Rsync",
+                        "Verbose": true,
+                        "Description": "Rsyncing configuration file",
+                        "Source": "../../conf/rsyslog-nginx.conf",
+                        "IsSourceContextRemote": false,
+                        "Destination": ".",
+                        "IsDestinationContextRemote": true
+                    },
+                    {
+                        "Type":"Commands",
+                        "Description": "Restarting rsyslog with the new config file.",
+                        "IsContextRemote": true,
+                        "Values":
+                        [
+                            "sudo mv ~/rsyslog-nginx.conf /etc/rsyslog.conf",
+                            "sudo service rsyslog restart"
                         ]
                     }
                 ]

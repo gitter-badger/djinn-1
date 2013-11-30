@@ -111,6 +111,9 @@ namespace Sungiant.Cloud.Aws
 
 				String command = String.Format ("\"{0}\"", String.Join ("; ", commands));
 
+				Console.WriteLine ("🏁  " + command);
+				Console.WriteLine ("");
+
 				Int32 exitCode = ProcessHelper.Run (
 					new String[]
 					{

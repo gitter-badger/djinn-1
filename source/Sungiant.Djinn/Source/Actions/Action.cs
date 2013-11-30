@@ -44,7 +44,7 @@ namespace Sungiant.Djinn
 
 		protected void LogPerform()
 		{
-			Console.WriteLine(" --> Performing " + specification.Type + " Action: " + Specification.Description);
+			Console.WriteLine("ACTION: " + specification.Type + " Action: " + Specification.Description + "\n");
 		}
 	}
 }

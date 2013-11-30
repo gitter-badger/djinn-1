@@ -31,18 +31,20 @@ namespace Sungiant.Cloud.Aws
 		{
 			var allDeployments = SelectAllCloudDeployments(client);
 
-			if( allDeployments.Count > 0 )
+			if (allDeployments != null)
 			{
-				Console.WriteLine("Cloud deployments");
+				if (allDeployments.Count > 0)
+				{
+					Console.WriteLine ("Cloud deployments");
 
-				allDeployments
-					.ToList()
-					.ForEach(x => Console.WriteLine(" - " + x.Identifier.IdentiferTags.First().Value + System.Environment.NewLine + x.Endpoints.Join(System.Environment.NewLine + "   - ")));
-				return;
-			}
+					allDeployments
+					.ToList ()
+					.ForEach (x => Console.WriteLine (" - " + x.Identifier.IdentiferTags.First ().Value + System.Environment.NewLine + x.Endpoints.Join (System.Environment.NewLine + "   - ")));
+					return;
+				}
 		
-
-			Console.WriteLine("Zero Cloud Deployments");
+				Console.WriteLine ("Zero EC2 Instances");
+			}
 		}
 		
 		// Amazon Provided Ubuntu Cloud Guest AMI - Ubuntu Server 12.10
@@ -336,7 +338,18 @@ namespace Sungiant.Cloud.Aws
 		
 		static List<AwsCloudDeployment> SelectAllCloudDeployments(AmazonEC2 client)
 		{
-			var response = client.DescribeInstances(new DescribeInstancesRequest());
+			Console.WriteLine("AWS EC2 Instances:");
+			DescribeInstancesResponse response = null;
+
+			try
+			{
+				response = client.DescribeInstances(new DescribeInstancesRequest());
+			}
+			catch(System.Net.WebException e)
+			{
+				Console.WriteLine("🔥  Failed to Describe AWS EC2 Instances: " + e.GetType() + " - " + e.Message);
+				return null;
+			}
 
 			var result1 = response.DescribeInstancesResult.Reservation
 				.SelectMany (a => a.RunningInstance)

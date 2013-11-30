@@ -8,7 +8,7 @@ namespace Sungiant.Djinn
 	public class Project
 	{
 		readonly ProjectSetupData setupData;
-		readonly List<Deployment> deployments;
+		readonly List<Deployment> deployments = new List<Deployment>();
 
 		public String LocalContext { get { return this.setupData.LocalContext; } }
 
@@ -18,17 +18,15 @@ namespace Sungiant.Djinn
 		{
 			this.setupData = setupData;
 
-			var blueprints = this.setupData.BlueprintSpecifications
+			Dictionary<String, Blueprint> blueprints = this.setupData.BlueprintSpecifications
 				.Select (y => new Blueprint (y, Path.Combine (LocalContext, "blueprints")))
 				.ToDictionary (x => x.Identifier, y => y);
 
-			var zones = this.setupData.ZoneSpecifications
-				.Select (y => new Zone (y))
-				.ToDictionary (x => x.Identifier, y => y);
-
-			deployments = this.setupData.DeploymentSpecifications
-				.Select (x => new Deployment (x, zones, blueprints))
+			List< Zone> zones = this.setupData.ZoneSpecifications
+				.Select (y => new Zone (y, blueprints))
 				.ToList ();
+
+			deployments = zones.SelectMany (x => x.Deployments).ToList ();
 		}
 	}
 }

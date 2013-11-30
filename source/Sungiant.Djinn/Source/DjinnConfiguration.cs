@@ -39,7 +39,6 @@ namespace Sungiant.Djinn
 			public String DjinnDirectory { get; set; }
 
 			public String BlueprintsDirectory { get { return Path.Combine (DjinnDirectory, "blueprints"); } }
-			public String DeploymentsDirectory { get { return Path.Combine (DjinnDirectory, "deployments"); } }
 			public String ZonesDirectory { get { return Path.Combine (DjinnDirectory, "zones"); } }
 		}
 

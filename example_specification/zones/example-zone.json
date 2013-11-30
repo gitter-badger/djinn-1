@@ -1,4 +1,16 @@
 {
     "ZoneIdentifier": "example-zone",
-    "Description": "A zone used for testing."
+    "Deployments":
+    [
+        {
+            "BlueprintIdentifier": "nginx-box",
+            "HorizontalScale": 1,
+            "VerticalScale": 1
+        },
+        {
+            "BlueprintIdentifier": "cpuminer",
+            "HorizontalScale": 1,
+            "VerticalScale": 1
+        }
+    ]
 }

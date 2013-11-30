@@ -42,11 +42,11 @@
     <Compile Include="Source\Actions\NginxServerBlock.cs" />
     <Compile Include="Source\Actions\MdToolBuild.cs" />
     <Compile Include="Source\Actions\Command.cs" />
-    <Compile Include="Source\Actions\AptitudeInstallation.cs" />
     <Compile Include="Source\Actions\XBuild.cs" />
     <Compile Include="Source\Zone.cs" />
     <Compile Include="Source\IAction.cs" />
     <Compile Include="Source\Actions\Commands.cs" />
+    <Compile Include="Source\Actions\Aptitude.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

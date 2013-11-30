@@ -16,7 +16,7 @@ namespace Sungiant.Djinn.Specification
 		/// A human readable description of the purpose of
 		/// this zone.
 		/// </summary>
-		public String Description { get; set; }
+		public Deployment[] Deployments { get; set; }
 
 	}
 }

@@ -20,7 +20,6 @@ namespace Sungiant.Djinn
 		public void AddProject (
 			String localContext,
 			List<Specification.Blueprint> blueprintSpecifications,
-			List<Specification.Deployment> deploymentSpecifications,
 			List<Specification.Zone> zoneSpecifications)
 		{
 			projects.Add (
@@ -28,7 +27,6 @@ namespace Sungiant.Djinn
 				{
 					LocalContext = localContext,
 					BlueprintSpecifications = blueprintSpecifications,
-					DeploymentSpecifications = deploymentSpecifications,
 					ZoneSpecifications = zoneSpecifications
 				});
 		}

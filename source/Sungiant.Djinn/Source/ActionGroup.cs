@@ -29,7 +29,11 @@ namespace Sungiant.Djinn
 		public ActionGroup(Specification.ActionGroup specification, String djinnContext)
 		{
 			this.specification = specification;
-			this.actions = specification.Actions.Select (x => Action.CreateFromSpecification (x, djinnContext)).ToList();
+
+			if (specification.Actions != null)
+				this.actions = specification.Actions.Select (x => Action.CreateFromSpecification (x, djinnContext)).ToList ();
+			else
+				this.actions = new List<Action> ();
 		}
 	}
 }

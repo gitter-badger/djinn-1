@@ -191,13 +191,11 @@ namespace Sungiant.Djinn
 			foreach (var projectConfig in DjinnConfiguration.Instance.ActiveWorkgroup.ProjectConfigurations)
 			{
 				var blueprint_specs = LoadSpecifications<Specification.Blueprint> (projectConfig.BlueprintsDirectory);
-				var deployment_specs = LoadSpecifications<Specification.Deployment> (projectConfig.DeploymentsDirectory);
 				var zone_specs = LoadSpecifications<Specification.Zone> (projectConfig.ZonesDirectory);
 
 				environmentSetupData.AddProject (
 					projectConfig.DjinnDirectory,
 					blueprint_specs,
-					deployment_specs,
 					zone_specs
 				);
 			}
@@ -293,7 +291,7 @@ namespace Sungiant.Djinn
 			var deployment = DjinnEnvironment.Projects
 				.SelectMany(x => x.Deployments)
 				.ToList()
-				.Find (x => (x.DeploymentGroup.Identifier == deploymentGroupIdentifier && x.Blueprint.Identifier == machineBlueprintIdentifier));
+				.Find (x => (x.Zone.Identifier == deploymentGroupIdentifier && x.Blueprint.Identifier == machineBlueprintIdentifier));
 
 			if (deployment == null)
 			{
@@ -351,7 +349,9 @@ namespace Sungiant.Djinn
 			}
 
 			Console.WriteLine ("");
-			Console.WriteLine ("Cloud Provider Status:");
+			Console.WriteLine ("Cloud Provider Status");
+			Console.WriteLine ("---------------------");
+			Console.WriteLine ("");
 
 			CloudProvider.PrintStatus();
 			

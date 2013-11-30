@@ -135,11 +135,22 @@ namespace Sungiant.Cloud.Aws
 
 		public static void PrintStatus(AmazonEC2 client)
 		{
-			var result = client.DescribeSecurityGroups( new DescribeSecurityGroupsRequest() );
+			Console.WriteLine("AWS EC2 Security Groups:");
+
+			DescribeSecurityGroupsResponse result = null;
+			try
+			{
+				result = client.DescribeSecurityGroups( new DescribeSecurityGroupsRequest() );
+			}
+			catch(System.Net.WebException e)
+			{
+				Console.WriteLine("🔥  Failed to describe AWS EC2 Security Groups: " + e.GetType() + " - " + e.Message);
+				return;
+			}
 			
 			if( result.DescribeSecurityGroupsResult.IsSetSecurityGroup() )
 			{
-				Console.WriteLine("Aws Security Groups:");
+
 
 				if( result.DescribeSecurityGroupsResult.SecurityGroup.Count > 0 )
 				{

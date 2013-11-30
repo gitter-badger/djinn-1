@@ -37,7 +37,7 @@ namespace Sungiant.Djinn
 
 			File.WriteAllText(tempUpstartJobPath, String.Join("\n", upstartScript));
 			
-			cloudProvider.RunCommand(cloudDeployment, "sudo service " + Specification.DaemonName + " stop");
+			cloudProvider.RunCommand(cloudDeployment, "sudo service " + Specification.DaemonName + " stop", true);
 
 			foreach( var endpoint in cloudDeployment.Endpoints )
 			{

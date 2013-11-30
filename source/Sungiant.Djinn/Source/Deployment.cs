@@ -7,18 +7,23 @@ namespace Sungiant.Djinn
 {
 	public class Deployment
 	{
-		Specification.Deployment Spec { get; set; }
-		
+		readonly Int32 horizontalScale;
+		readonly Int32 verticalScale;
+		readonly Blueprint blueprint;
+		readonly Zone zone;
+		readonly CloudDeploymentIdentity identity;
+
 		public Deployment(
 			Specification.Deployment spec, 
-			Dictionary<String, Zone> deploymentGroups,
-			Dictionary<String, Blueprint> machineBlueprints)
+			Zone zone,
+			Blueprint blueprint)
 		{
-			this.Spec = spec;
-			this.DeploymentGroup = deploymentGroups[spec.ZoneIdentifier];
-			this.Blueprint = machineBlueprints[spec.BlueprintIdentifier];
+			this.zone = zone;
+			this.blueprint = blueprint;
+			this.horizontalScale = spec.HorizontalScale;
+			this.verticalScale = spec.VerticalScale;
 
-			Identity = new CloudDeploymentIdentity()
+			identity = new CloudDeploymentIdentity()
 			{
 				IdentiferTags = new List<CloudDeploymentIdentifierTag>()
 				{
@@ -37,7 +42,7 @@ namespace Sungiant.Djinn
 							new CloudDeploymentIdentifierTag()
 							{
 								Name = "ZoneId",
-								Value = DeploymentGroup.Identifier
+								Value = Zone.Identifier
 							},
 							new CloudDeploymentIdentifierTag()
 							{
@@ -51,33 +56,28 @@ namespace Sungiant.Djinn
 				{
 					new CloudDeploymentIdentifierTag()
 					{
-						Name = "DeploymentDescription",
-						Value = DeploymentGroup.Description
-					},
-					new CloudDeploymentIdentifierTag()
-					{
 						Name = "MachineDescription",
 						Value = Blueprint.Description
 					}
 				}
 			};
 		}
-		
-		public Blueprint Blueprint { get; private set; }
 
-		public Zone DeploymentGroup { get; private set; }
+		public CloudDeploymentIdentity Identity { get { return identity; } }
 
-		public CloudDeploymentIdentity Identity { get; private set; }
+		String Identifier { get { return Zone.Identifier + " (" + Blueprint.Identifier + ")"; } }
 
-		String Identifier { get { return DeploymentGroup.Identifier + " (" + Blueprint.Identifier + ")"; } }
+		public Blueprint Blueprint { get { return blueprint; } }
+
+		public Zone Zone { get { return zone; } }
+
+		public Int32 HorizontalScale { get { return horizontalScale; } }
 		
-		public Int32 HorizontalScale { get { return Spec.HorizontalScale; } }
-		
-		public Int32 VerticalScale { get { return Spec.VerticalScale; } }
+		public Int32 VerticalScale { get { return verticalScale; } }
 
 		public override String ToString ()
 		{
-			return String.Format ("[Deployment: Blueprint={0}, DeploymentGroup={1}, Identity={2}, HorizontalScale={3}, VerticalScale={4}]", Blueprint, DeploymentGroup, Identity, HorizontalScale, VerticalScale);
+			return String.Format ("[Deployment: Blueprint={0}, Zone={1}, Identity={2}, HorizontalScale={3}, VerticalScale={4}]", Blueprint, Zone, Identity, HorizontalScale, VerticalScale);
 		}
 	}
 }
