@@ -1,4 +1,4 @@
-<img src="logo.jpg" width="96px"/>
+<img src="logo.jpg" width="192px"/>
 
 Getting Started
 ===============
