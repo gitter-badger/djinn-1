@@ -101,5 +101,9 @@
       <Project>{49F9C52F-FA9D-4FF2-8399-FF251F9619B2}</Project>
       <Name>Sungiant.Djinn.Specification</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sungiant.Djinn.Configuration\Sungiant.Djinn.Configuration.csproj">
+      <Project>{E018B427-89FE-42C5-91B5-4F6E8BCF06CE}</Project>
+      <Name>Sungiant.Djinn.Configuration</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

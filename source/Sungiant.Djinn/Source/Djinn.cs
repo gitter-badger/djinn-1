@@ -165,18 +165,6 @@ namespace Sungiant.Djinn
 				return (o as Specification.IAction);
 			};
 		}
-
-        static String ResolveDirectoryForUser (String str)
-        {
-            if (str.IndexOf ("~/") == 0)
-            {
-                str = Path.Combine(
-                    Environment.GetEnvironmentVariable("HOME"),
-                    str.Substring(2, str.Length - 2));
-            }
-            
-            return str;
-        }
         
         public static void Main (string[] args)
         {
@@ -202,24 +190,20 @@ namespace Sungiant.Djinn
 
             foreach (var projectConfig in DjinnConfiguration.Instance.ActiveWorkgroup.ProjectConfigurations)
             {
-                String bluesDir = ResolveDirectoryForUser(projectConfig.BlueprintsDirectory);
-                
-                if (!Directory.Exists (bluesDir))
+                if (!Directory.Exists (projectConfig.BlueprintsDirectory))
                 {
-                    Console.WriteLine("🔥  Missing blueprints directory: " + bluesDir);
+                    Console.WriteLine("🔥  Missing blueprints directory: " + projectConfig.BlueprintsDirectory);
                     continue;
                 }
                 
-                String zonesDir = ResolveDirectoryForUser(projectConfig.ZonesDirectory);
-                
-                if (!Directory.Exists (zonesDir))
+                if (!Directory.Exists (projectConfig.ZonesDirectory))
                 {
-                    Console.WriteLine("🔥  Missing zones directory: " + zonesDir);
+                    Console.WriteLine("🔥  Missing zones directory: " + projectConfig.ZonesDirectory);
                     continue;
                 }
                 
-				var blueprint_specs = LoadSpecifications<Specification.Blueprint> (bluesDir);
-				var zone_specs = LoadSpecifications<Specification.Zone> (zonesDir);
+				var blueprint_specs = LoadSpecifications<Specification.Blueprint> (projectConfig.BlueprintsDirectory);
+				var zone_specs = LoadSpecifications<Specification.Zone> (projectConfig.ZonesDirectory);
 
 				environmentSetupData.AddProject (
 					projectConfig.DjinnDirectory,

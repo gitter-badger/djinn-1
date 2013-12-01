@@ -3,60 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using ServiceStack.Text;
 using Sungiant.Core;
+using Sungiant.Djinn.Configuration;
 
 namespace Sungiant.Djinn
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class DjinnInstallationFile
-	{
-		/// <summary>
-		/// When was Djinn last installed.  (todo: this should live in a different file)
-		/// </summary>
-		public Int32 InstallTime { get; set; }
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	public class DjinnSettingsFile
-	{
-		public int ActiveWorkgroupIndex { get; set; }
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	public class DjinnFile
-	{
-		/// <summary>
-		/// 
-		/// </summary>
-		public class ProjectConfiguration
-		{
-			public String ProjectIdentifier { get; set; }
-			public String DjinnDirectory { get; set; }
-
-			public String BlueprintsDirectory { get { return Path.Combine (DjinnDirectory, "blueprints"); } }
-			public String ZonesDirectory { get { return Path.Combine (DjinnDirectory, "zones"); } }
-		}
-
-		/// <summary>
-		/// A workgroup represents a group of 
-		/// </summary>
-		public class Workgroup
-		{
-			public String WorkgroupIdentifier { get; set; }
-			public ProjectConfiguration[] ProjectConfigurations { get; set; }
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public Workgroup[] Workgroups { get; set; }
-	}
-
 	/// <summary>
 	/// Represents all of the Djinn configuration file, updated at load time.
 	/// </summary>
@@ -71,7 +21,6 @@ namespace Sungiant.Djinn
 
 		public Sungiant.Cloud.Aws.AwsCredentials DjinnAwsFile { get; private set; }
 		public Sungiant.Cloud.Azure.AzureCredentials DjinnAzureFile { get; private set; }
-
 
 		public DjinnFile.Workgroup ActiveWorkgroup
 		{
