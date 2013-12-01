@@ -32,12 +32,12 @@ if [ ! -f $HOME/.djinn ]; then
     echo "    \"Workgroups\":" >> $HOME/.djinn
     echo "    [" >> $HOME/.djinn
     echo "        {" >> $HOME/.djinn
-    echo "            \"Name\":\"default\"" >> $HOME/.djinn
+    echo "            \"WorkgroupIdentifier\":\"default\"," >> $HOME/.djinn
     echo "            \"ProjectConfigurations\":" >> $HOME/.djinn
     echo "            [" >> $HOME/.djinn
     echo "                {" >> $HOME/.djinn
-    echo "                    \"Name\":\"example_project\"" >> $HOME/.djinn
-    echo "                    \"DjinnDirectory\":\"~/djinn/example_project_dir/djinn/\"" >> $HOME/.djinn
+    echo "                    \"ProjectIdentifier\":\"example_project\"," >> $HOME/.djinn
+    echo "                    \"DjinnDirectory\":\"~/europa/example_specification/\"" >> $HOME/.djinn
     echo "                }" >> $HOME/.djinn
     echo "            ]" >> $HOME/.djinn
     echo "        }" >> $HOME/.djinn
