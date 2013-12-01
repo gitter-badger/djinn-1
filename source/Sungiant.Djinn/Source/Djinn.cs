@@ -206,7 +206,7 @@ namespace Sungiant.Djinn
                 
                 if (!Directory.Exists (bluesDir))
                 {
-                    Console.WriteLine("🔥 Missing blueprints directory: " + bluesDir);
+                    Console.WriteLine("🔥  Missing blueprints directory: " + bluesDir);
                     continue;
                 }
                 
@@ -214,7 +214,7 @@ namespace Sungiant.Djinn
                 
                 if (!Directory.Exists (zonesDir))
                 {
-                    Console.WriteLine("🔥 Missing zones directory: " + zonesDir);
+                    Console.WriteLine("🔥  Missing zones directory: " + zonesDir);
                     continue;
                 }
                 
