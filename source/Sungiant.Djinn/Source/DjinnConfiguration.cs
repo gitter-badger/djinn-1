@@ -48,13 +48,13 @@ namespace Sungiant.Djinn
 		public class Workgroup
 		{
 			public String WorkgroupIdentifier { get; set; }
-			public List<ProjectConfiguration> ProjectConfigurations { get; set; }
+			public ProjectConfiguration[] ProjectConfigurations { get; set; }
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public List<Workgroup> Workgroups { get; set; }
+		public Workgroup[] Workgroups { get; set; }
 	}
 
 	/// <summary>
@@ -92,36 +92,35 @@ namespace Sungiant.Djinn
 		{
 			if (File.Exists (DjinnConfigurationFilePath))
 			{
-				DjinnFile = 
-					File.ReadAllText (DjinnConfigurationFilePath)
-						.FromJson<DjinnFile> ();
+                String rawDjinnFile = File.ReadAllText (DjinnConfigurationFilePath);
+				DjinnFile = rawDjinnFile.FromJson<DjinnFile> ();
 
 				if (File.Exists (DjinnConfigurationFilePath + ".aws"))
 				{
+                    String rawDjinnAwsFile = File.ReadAllText (DjinnConfigurationFilePath + ".aws");
 					DjinnConfiguration.Instance.DjinnAwsFile = 
-						File.ReadAllText (DjinnConfigurationFilePath + ".aws")
-							.FromJson<Sungiant.Cloud.Aws.AwsCredentials> ();
+						rawDjinnAwsFile.FromJson<Sungiant.Cloud.Aws.AwsCredentials> ();
 				}
 
 				if (File.Exists (DjinnConfigurationFilePath + ".azure"))
 				{
+                    String rawDjinnAzureFile = File.ReadAllText (DjinnConfigurationFilePath + ".azure");
 					DjinnConfiguration.Instance.DjinnAzureFile = 
-						File.ReadAllText (DjinnConfigurationFilePath + ".azure")
-							.FromJson<Sungiant.Cloud.Azure.AzureCredentials> ();
+						rawDjinnAzureFile.FromJson<Sungiant.Cloud.Azure.AzureCredentials> ();
 				}
 
 				if (File.Exists (DjinnConfigurationFilePath + ".installation"))
 				{
+                    String rawDjinnInstallationFile = File.ReadAllText (DjinnConfigurationFilePath + ".installation");
 					DjinnConfiguration.Instance.DjinnInstallationFile = 
-						File.ReadAllText (DjinnConfigurationFilePath + ".installation")
-							.FromJson<DjinnInstallationFile> ();
+						rawDjinnInstallationFile.FromJson<DjinnInstallationFile> ();
 				}
 
 				if (File.Exists (DjinnConfigurationFilePath + ".settings"))
 				{
+                    String rawDjinnSettingsFile = File.ReadAllText (DjinnConfigurationFilePath + ".settings");
 					DjinnConfiguration.Instance.DjinnSettingsFile = 
-						File.ReadAllText (DjinnConfigurationFilePath + ".settings")
-							.FromJson<DjinnSettingsFile> ();
+						rawDjinnSettingsFile.FromJson<DjinnSettingsFile> ();
 				}
 
 				if( DjinnAwsFile == null &&
