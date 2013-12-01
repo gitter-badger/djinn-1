@@ -166,32 +166,60 @@ namespace Sungiant.Djinn
 			};
 		}
 
-        public static void Main(string[] args)
+        static String ResolveDirectoryForUser (String str)
+        {
+            if (str.IndexOf ("~/") == 0)
+            {
+                str = Path.Combine(
+                    Environment.GetEnvironmentVariable("HOME"),
+                    str.Substring(2, str.Length - 2));
+            }
+            
+            return str;
+        }
+        
+        public static void Main (string[] args)
         {
 			
-			Console.WriteLine ("________        ____.___ _______    _______   ");
-			Console.WriteLine ("\\______ \\      |    |   |\\      \\   \\      \\");
-			Console.WriteLine (" |    |  \\     |    |   |/   |   \\  /   |   \\ ");
-			Console.WriteLine (" |    `   \\/\\__|    |   /    |    \\/    |    \\");
-			Console.WriteLine ("/_______  /\\________|___\\____|__  /\\____|__  /");
-			Console.WriteLine ("        \\/                      \\/         \\/ ");
-			Console.WriteLine ("Djinn v" + Version);
+            Console.WriteLine ("________        ____.___ _______    _______   ");
+            Console.WriteLine ("\\______ \\      |    |   |\\      \\   \\      \\");
+            Console.WriteLine (" |    |  \\     |    |   |/   |   \\  /   |   \\ ");
+            Console.WriteLine (" |    `   \\/\\__|    |   /    |    \\/    |    \\");
+            Console.WriteLine ("/_______  /\\________|___\\____|__  /\\____|__  /");
+            Console.WriteLine ("        \\/                      \\/         \\/ ");
+            Console.WriteLine ("Djinn v" + Version);
 
-			ConfigureCustomJsonDeserialization ();
+            ConfigureCustomJsonDeserialization ();
 
-			// loads up djinn's configuration file
-			DjinnConfiguration.Instance.Load ();
+            // loads up djinn's configuration file
+            DjinnConfiguration.Instance.Load ();
 
-			InitiliseCloudProvider();
+            InitiliseCloudProvider ();
 
-			Console.WriteLine ("Active Workgroup: " + DjinnConfiguration.Instance.ActiveWorkgroup.WorkgroupIdentifier);
+            Console.WriteLine ("Active Workgroup: " + DjinnConfiguration.Instance.ActiveWorkgroup.WorkgroupIdentifier);
 
-			var environmentSetupData = new EnvironmentSetupData (DjinnConfiguration.Instance.ActiveWorkgroup.WorkgroupIdentifier);
+            var environmentSetupData = new EnvironmentSetupData (DjinnConfiguration.Instance.ActiveWorkgroup.WorkgroupIdentifier);
 
-			foreach (var projectConfig in DjinnConfiguration.Instance.ActiveWorkgroup.ProjectConfigurations)
-			{
-				var blueprint_specs = LoadSpecifications<Specification.Blueprint> (projectConfig.BlueprintsDirectory);
-				var zone_specs = LoadSpecifications<Specification.Zone> (projectConfig.ZonesDirectory);
+            foreach (var projectConfig in DjinnConfiguration.Instance.ActiveWorkgroup.ProjectConfigurations)
+            {
+                String bluesDir = ResolveDirectoryForUser(projectConfig.BlueprintsDirectory);
+                
+                if (!Directory.Exists (bluesDir))
+                {
+                    Console.WriteLine("🔥 Missing blueprints directory: " + bluesDir);
+                    continue;
+                }
+                
+                String zonesDir = ResolveDirectoryForUser(projectConfig.ZonesDirectory);
+                
+                if (!Directory.Exists (zonesDir))
+                {
+                    Console.WriteLine("🔥 Missing zones directory: " + zonesDir);
+                    continue;
+                }
+                
+				var blueprint_specs = LoadSpecifications<Specification.Blueprint> (bluesDir);
+				var zone_specs = LoadSpecifications<Specification.Zone> (zonesDir);
 
 				environmentSetupData.AddProject (
 					projectConfig.DjinnDirectory,
