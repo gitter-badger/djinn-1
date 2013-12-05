@@ -11,6 +11,9 @@ namespace Sungiant.Djinn.Specification
 			Delete = true;
 			Verbose = true;
 			Recursive = true;
+			IsSourceContextRemote = false;
+			IsDestinationContextRemote = true;
+			Checksum = true;
 		}
 
 		// Base class data

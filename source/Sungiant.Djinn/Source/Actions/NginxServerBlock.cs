@@ -6,8 +6,10 @@ using ServiceStack.Text;
 using System.Linq;
 using System.IO;
 
+using DjinnCommand = Sungiant.Djinn.Command;
 
-namespace Sungiant.Djinn
+
+namespace Sungiant.Djinn.Actions
 {
 	public class SslConfig
 	{
@@ -21,11 +23,8 @@ namespace Sungiant.Djinn
 		public NginxServerBlock(Specification.NginxServerBlock specification, String djinnContext) 
 			: base(specification, djinnContext) {}
 
-		// todo, ssl and certs
-		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
+		public override DjinnCommand[] GetRunnableCommands (ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
 		{
-			LogPerform();
-			
 			string filename = Specification.Name + ".conf";
 			
 			string tempNginxConfigFile = Path.GetTempPath() + "nginx-" + filename;
@@ -89,29 +88,58 @@ namespace Sungiant.Djinn
 
 			nginxScript.Add( "}" );
 			nginxScript.Add( "" );
-			
-			File.WriteAllText(tempNginxConfigFile, String.Join("\n", nginxScript));
-			
-			cloudProvider.RunCommand(cloudDeployment, "sudo service " + "nginx stop");
-			
-			foreach( var endpoint in cloudDeployment.Endpoints )
-			{
-				ProcessHelper.Run(
-					new String[]
-					{
-						"rsync",
-						"-v",
-						String.Format("--rsh \"ssh -o StrictHostKeyChecking=no -i {0}\"", cloudProvider.PrivateKeyPath),
-						tempNginxConfigFile,
-						String.Format("{0}@{1}:{2}", cloudProvider.User, endpoint, filename)
-					}.Join(" "),
-				Console.WriteLine);
-			}
-			
-			cloudProvider.RunCommand(cloudDeployment, "sudo mv "+ filename + " /etc/nginx/sites-enabled/" + Specification.Name);
-			cloudProvider.RunCommand(cloudDeployment, "sudo service "+ "nginx start");
-			cloudProvider.RunCommand(cloudDeployment, "sudo service "+ "nginx status");
 
+			File.WriteAllText(tempNginxConfigFile, String.Join("\n", nginxScript));
+
+			var result = new List<DjinnCommand> ();
+
+
+			// Stop Nginx
+			result.Add (
+				new DjinnCommand {
+					MachineContext = MachineContext.Remote,
+					Value = "sudo service " + "nginx stop"
+				});
+
+			// Copy across the Nginx server configuration
+			result.AddRange (
+				new Rsync (
+					new Sungiant.Djinn.Specification.Rsync {
+						Source = tempNginxConfigFile,
+						Destination = filename
+					},
+					this.DjinnContext)
+				.GetRunnableCommands (cloudProvider, cloudDeployment));
+
+			// Move the file into the right place
+			result.Add (
+				new DjinnCommand {
+					MachineContext = MachineContext.Remote,
+					Value = "sudo mv "+ filename + " /etc/nginx/sites-enabled/" + Specification.Name
+				});
+
+			// Start Nginx
+			result.Add (
+				new DjinnCommand {
+					MachineContext = MachineContext.Remote,
+					Value = "sudo service "+ "nginx start"
+				});
+
+			// Check that Nginx is ok 5 seconds later
+			result.Add (
+				new DjinnCommand {
+					MachineContext = MachineContext.Local,
+					Value = "sleep 5"
+				});
+
+			// Show the Nginx status
+			result.Add (
+				new DjinnCommand {
+					MachineContext = MachineContext.Remote,
+					Value = "sudo service "+ "nginx status"
+				});
+
+			return result.ToArray();
 		}
 	}
 }

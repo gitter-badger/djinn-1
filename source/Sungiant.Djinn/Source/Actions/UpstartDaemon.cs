@@ -6,7 +6,9 @@ using ServiceStack.Text;
 using System.Linq;
 using System.IO;
 
-namespace Sungiant.Djinn
+using DjinnCommand = Sungiant.Djinn.Command;
+
+namespace Sungiant.Djinn.Actions
 {
 	public class UpstartDaemon
 		: Action<Specification.UpstartDaemon>
@@ -15,9 +17,9 @@ namespace Sungiant.Djinn
 			: base(specification, djinnContext) {}
 
 
-		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
+		public override DjinnCommand[] GetRunnableCommands (ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
 		{
-			LogPerform();
+			var result = new List<DjinnCommand> ();
 
 			String filename = Specification.DaemonName + ".conf";
 
@@ -36,27 +38,55 @@ namespace Sungiant.Djinn
 			};
 
 			File.WriteAllText(tempUpstartJobPath, String.Join("\n", upstartScript));
-			
-			cloudProvider.RunCommand(cloudDeployment, "sudo service " + Specification.DaemonName + " stop", true);
 
-			foreach( var endpoint in cloudDeployment.Endpoints )
-			{
-				ProcessHelper.Run(
-					new String[]
-					{
-						"rsync",
-						"-v",
-						String.Format("--rsh \"ssh -o StrictHostKeyChecking=no -i {0}\"", cloudProvider.PrivateKeyPath),
-						tempUpstartJobPath,
-						String.Format("{0}@{1}:{2}", cloudProvider.User, endpoint, filename)
-					}.Join(" "),
-				Console.WriteLine);
-			}
 
-			cloudProvider.RunCommand(cloudDeployment, "sudo mv " + filename + " /etc/init/" + filename);
-			cloudProvider.RunCommand(cloudDeployment, "sudo service " + Specification.DaemonName + " start");
-			cloudProvider.RunCommand(cloudDeployment, "sudo service " + Specification.DaemonName + " status");
+			// Stop the service (ignoring errors as it might already exist)
+			result.Add (
+				new DjinnCommand {
+					MachineContext = MachineContext.Remote,
+					Value = "sudo service " + Specification.DaemonName + " stop",
+					IgnoreErrors = true
+				});
 
+			// Copy across the Nginx server configuration
+			result.AddRange (
+				new Rsync (
+					new Sungiant.Djinn.Specification.Rsync {
+						Source = tempUpstartJobPath,
+						Destination = filename
+					},
+					this.DjinnContext)
+				.GetRunnableCommands (cloudProvider, cloudDeployment));
+
+			result.Add (
+				new DjinnCommand {
+					MachineContext = MachineContext.Remote,
+					Value = "sudo mv " + filename + " /etc/init/" + filename,
+					IgnoreErrors = true
+				});
+
+			result.Add (
+				new DjinnCommand {
+					MachineContext = MachineContext.Remote,
+					Value = "sudo service " + Specification.DaemonName + " start",
+					IgnoreErrors = true
+				});
+
+			// Check that Nginx is ok 5 seconds later
+			result.Add (
+				new DjinnCommand {
+					MachineContext = MachineContext.Local,
+					Value = "sleep 5"
+				});
+
+			result.Add (
+				new DjinnCommand {
+					MachineContext = MachineContext.Remote,
+					Value = "sudo service " + Specification.DaemonName + " status",
+					IgnoreErrors = true
+				});
+
+			return result.ToArray();
 		}
 	}
 }

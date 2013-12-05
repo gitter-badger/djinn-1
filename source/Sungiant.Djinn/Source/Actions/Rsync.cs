@@ -4,8 +4,11 @@ using Sungiant.Core;
 using System.IO;
 using System.Collections.Generic;
 using ServiceStack.Text;
+using System.Linq;
 
-namespace Sungiant.Djinn
+using DjinnCommand = Sungiant.Djinn.Command;
+
+namespace Sungiant.Djinn.Actions
 {
 	public class Rsync
 		: Action<Specification.Rsync>
@@ -65,70 +68,55 @@ namespace Sungiant.Djinn
 			}
 		}
 
-		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
+		public override DjinnCommand[] GetRunnableCommands (ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
 		{
-			LogPerform();
+			var commands = new List<String> ();
 
-			if( SourceContext == MachineContext.Local && DestinationContext == MachineContext.Local )
+			if (SourceContext == MachineContext.Local && DestinationContext == MachineContext.Local ||
+			    SourceContext == MachineContext.Remote && DestinationContext == MachineContext.Remote)
 			{
-				ProcessHelper.Run(
-					"rsync " +
-					Arguments.Join(" ") + " " + Source + " " + Destination, 
-					Console.WriteLine
-					);
-				return;
+				commands.Add ("rsync " + Arguments.Join (" ") + " " + Source + " " + Destination);
 			}
-			
-			if( SourceContext == MachineContext.Remote && DestinationContext == MachineContext.Remote )
+			else if (SourceContext == MachineContext.Local && DestinationContext == MachineContext.Remote)
 			{
-				cloudProvider.RunCommand(
-					cloudDeployment,
-					"rsync " +
-					new string[]
-					{
-						Arguments.Join(" "),
-						Source,
-						Destination
-					}.Join(" "));
-
-				return;
-			}
-			
-			if( SourceContext == MachineContext.Local && DestinationContext == MachineContext.Remote )
-			{
-				foreach( var endpoint in cloudDeployment.Endpoints )
+				foreach (var endpoint in cloudDeployment.Endpoints)
 				{
-					ProcessHelper.Run(
-						new String[]
-						{
+					commands.Add (
+						new String[] {
 							"rsync",
-							Arguments.Join(" "),
-							String.Format("--rsh \"ssh -o StrictHostKeyChecking=no -i {0}\"", cloudProvider.PrivateKeyPath),
+							Arguments.Join (" "),
+							String.Format ("--rsh \"ssh -o StrictHostKeyChecking=no -i {0}\"", cloudProvider.PrivateKeyPath),
 							Source,
-							String.Format("{0}@{1}:{2}", cloudProvider.User, endpoint, Destination)
-						}.Join(" "), 
-						Console.WriteLine);
+							String.Format ("{0}@{1}:{2}", cloudProvider.User, endpoint, Destination)
+						}.Join (" "));
 				}
-				return;
 			}
-			
-			if( SourceContext == MachineContext.Remote && DestinationContext == MachineContext.Local )
+			else if (SourceContext == MachineContext.Remote && DestinationContext == MachineContext.Local)
 			{
-				foreach( var endpoint in cloudDeployment.Endpoints )
+				// todo, this is broken, because ypu might have 4 machines rsyncing down to just one
+				foreach (var endpoint in cloudDeployment.Endpoints)
 				{
-					ProcessHelper.Run(
-						new String[]
-						{
+					commands.Add (
+						new String[] {
 							"rsync",
-							Arguments.Join(" "),
-							String.Format("--rsh \"ssh -o StrictHostKeyChecking=no -i {0}\"", cloudProvider.PrivateKeyPath),
-							String.Format("{0}@{1}:{2}", cloudProvider.User, endpoint, Source),
-							Destination
-						}.Join(" "),
-						Console.WriteLine);
+							Arguments.Join (" "),
+							String.Format ("--rsh \"ssh -o StrictHostKeyChecking=no -i {0}\"", cloudProvider.PrivateKeyPath),
+							String.Format ("{0}@{1}:{2}", cloudProvider.User, endpoint, Source),
+							Path.Combine (Destination, endpoint)
+						}.Join (" "));
 				}
-				return;
 			}
+
+			var result = commands
+				.Select (x => 
+					new DjinnCommand () 
+					{ 
+						MachineContext = SourceContext,
+						Value = x 
+					})
+				.ToArray ();
+
+			return result;
 		}
 	}
 }

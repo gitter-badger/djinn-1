@@ -7,73 +7,22 @@ using Sungiant.Core;
 namespace Sungiant.Djinn
 {
 	/// <summary>
-	/// 
-	/// </summary>
-	public class DjinnInstallationFile
-	{
-		/// <summary>
-		/// When was Djinn last installed.  (todo: this should live in a different file)
-		/// </summary>
-		public Int32 InstallTime { get; set; }
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	public class DjinnSettingsFile
-	{
-		public int ActiveWorkgroupIndex { get; set; }
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	public class DjinnFile
-	{
-		/// <summary>
-		/// 
-		/// </summary>
-		public class ProjectConfiguration
-		{
-			public String ProjectIdentifier { get; set; }
-			public String DjinnDirectory { get; set; }
-
-			public String BlueprintsDirectory { get { return Path.Combine (DjinnDirectory, "blueprints"); } }
-			public String ZonesDirectory { get { return Path.Combine (DjinnDirectory, "zones"); } }
-		}
-
-		/// <summary>
-		/// A workgroup represents a group of 
-		/// </summary>
-		public class Workgroup
-		{
-			public String WorkgroupIdentifier { get; set; }
-			public List<ProjectConfiguration> ProjectConfigurations { get; set; }
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public List<Workgroup> Workgroups { get; set; }
-	}
-
-	/// <summary>
 	/// Represents all of the Djinn configuration file, updated at load time.
 	/// </summary>
-	public class DjinnConfiguration
-		: Singleton<DjinnConfiguration>
+	public class Configuration
+		: Singleton<Configuration>
 	{
 		static readonly String DjinnConfigurationFilePath;
 
-		public DjinnFile DjinnFile { get; private set; }
-		public DjinnInstallationFile DjinnInstallationFile { get; private set; }
-		public DjinnSettingsFile DjinnSettingsFile { get; private set; }
+		public ConfigFiles.DjinnFile DjinnFile { get; private set; }
+		public ConfigFiles.InstallationFile DjinnInstallationFile { get; private set; }
+		public ConfigFiles.SettingsFile DjinnSettingsFile { get; private set; }
 
 		public Sungiant.Cloud.Aws.AwsCredentials DjinnAwsFile { get; private set; }
 		public Sungiant.Cloud.Azure.AzureCredentials DjinnAzureFile { get; private set; }
 
 
-		public DjinnFile.Workgroup ActiveWorkgroup
+		public ConfigFiles.DjinnFile.Workgroup ActiveWorkgroup
 		{
 			get { return DjinnFile.Workgroups[DjinnSettingsFile.ActiveWorkgroupIndex]; }
 		}
@@ -83,9 +32,9 @@ namespace Sungiant.Djinn
 			get { return DateTimeHelper.FromUnixTime(DjinnInstallationFile.InstallTime); }
 		}
 
-		static DjinnConfiguration()
+		static Configuration()
 		{
-			DjinnConfigurationFilePath = Environment.GetEnvironmentVariable("HOME") + "/.djinn";
+			DjinnConfigurationFilePath = System.Environment.GetEnvironmentVariable("HOME") + "/.djinn";
 		}
 
 		public void Load()
@@ -94,34 +43,34 @@ namespace Sungiant.Djinn
 			{
 				DjinnFile = 
 					File.ReadAllText (DjinnConfigurationFilePath)
-						.FromJson<DjinnFile> ();
+						.FromJson<ConfigFiles.DjinnFile> ();
 
 				if (File.Exists (DjinnConfigurationFilePath + ".aws"))
 				{
-					DjinnConfiguration.Instance.DjinnAwsFile = 
+					Instance.DjinnAwsFile = 
 						File.ReadAllText (DjinnConfigurationFilePath + ".aws")
 							.FromJson<Sungiant.Cloud.Aws.AwsCredentials> ();
 				}
 
 				if (File.Exists (DjinnConfigurationFilePath + ".azure"))
 				{
-					DjinnConfiguration.Instance.DjinnAzureFile = 
+					Instance.DjinnAzureFile = 
 						File.ReadAllText (DjinnConfigurationFilePath + ".azure")
 							.FromJson<Sungiant.Cloud.Azure.AzureCredentials> ();
 				}
 
 				if (File.Exists (DjinnConfigurationFilePath + ".installation"))
 				{
-					DjinnConfiguration.Instance.DjinnInstallationFile = 
+					Instance.DjinnInstallationFile = 
 						File.ReadAllText (DjinnConfigurationFilePath + ".installation")
-							.FromJson<DjinnInstallationFile> ();
+							.FromJson<ConfigFiles.InstallationFile> ();
 				}
 
 				if (File.Exists (DjinnConfigurationFilePath + ".settings"))
 				{
-					DjinnConfiguration.Instance.DjinnSettingsFile = 
+					Instance.DjinnSettingsFile = 
 						File.ReadAllText (DjinnConfigurationFilePath + ".settings")
-							.FromJson<DjinnSettingsFile> ();
+							.FromJson<ConfigFiles.SettingsFile> ();
 				}
 
 				if( DjinnAwsFile == null &&

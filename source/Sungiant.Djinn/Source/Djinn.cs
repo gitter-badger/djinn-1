@@ -52,7 +52,7 @@ namespace Sungiant.Djinn
 
 	static class Djinn
     {
-		public static DjinnEnvironment DjinnEnvironment { get; private set; }
+		public static Environment DjinnEnvironment { get; private set; }
 
 		static Int32 LogLevel { get; set; }
 		static Boolean ShowHelp { get; set; }
@@ -61,7 +61,7 @@ namespace Sungiant.Djinn
 
 		static OptionSet OptionSet;
 
-		const string Version = "0.2.3";
+		const string Version = "0.2.4";
 
 		static Djinn()
 		{
@@ -180,15 +180,15 @@ namespace Sungiant.Djinn
 			ConfigureCustomJsonDeserialization ();
 
 			// loads up djinn's configuration file
-			DjinnConfiguration.Instance.Load ();
+			Configuration.Instance.Load ();
 
 			InitiliseCloudProvider();
 
-			Console.WriteLine ("Active Workgroup: " + DjinnConfiguration.Instance.ActiveWorkgroup.WorkgroupIdentifier);
+			Console.WriteLine ("Active Workgroup: " + Configuration.Instance.ActiveWorkgroup.WorkgroupIdentifier);
 
-			var environmentSetupData = new EnvironmentSetupData (DjinnConfiguration.Instance.ActiveWorkgroup.WorkgroupIdentifier);
+			var environmentSetupData = new EnvironmentSetupData (Configuration.Instance.ActiveWorkgroup.WorkgroupIdentifier);
 
-			foreach (var projectConfig in DjinnConfiguration.Instance.ActiveWorkgroup.ProjectConfigurations)
+			foreach (var projectConfig in Configuration.Instance.ActiveWorkgroup.ProjectConfigurations)
 			{
 				var blueprint_specs = LoadSpecifications<Specification.Blueprint> (projectConfig.BlueprintsDirectory);
 				var zone_specs = LoadSpecifications<Specification.Zone> (projectConfig.ZonesDirectory);
@@ -200,9 +200,9 @@ namespace Sungiant.Djinn
 				);
 			}
 
-			DjinnEnvironment = new DjinnEnvironment(environmentSetupData);
+			DjinnEnvironment = new Environment(environmentSetupData);
 
-			DjinnTask djinnTask = ParseArguments(args);
+			Task djinnTask = ParseArguments(args);
 
 			if (ShowHelp || djinnTask == null) 
 			{
@@ -216,50 +216,50 @@ namespace Sungiant.Djinn
 
 		static void InitiliseCloudProvider()
 		{
-			if (DjinnConfiguration.Instance.DjinnAwsFile != null && DjinnConfiguration.Instance.DjinnAzureFile != null)
+			if (Configuration.Instance.DjinnAwsFile != null && Configuration.Instance.DjinnAzureFile != null)
 			{
 				throw new NotImplementedException("todo: do you want to use azure or aws?");
 			}
 			
-			if (DjinnConfiguration.Instance.DjinnAwsFile != null)
+			if (Configuration.Instance.DjinnAwsFile != null)
 			{
-				CloudProvider = new Sungiant.Cloud.Aws.Aws(DjinnConfiguration.Instance.DjinnAwsFile);
+				CloudProvider = new Sungiant.Cloud.Aws.Aws(Configuration.Instance.DjinnAwsFile);
 			}
 			
-			if (DjinnConfiguration.Instance.DjinnAzureFile != null)
+			if (Configuration.Instance.DjinnAzureFile != null)
 			{
-				CloudProvider = new Sungiant.Cloud.Azure.Azure(DjinnConfiguration.Instance.DjinnAzureFile);
+				CloudProvider = new Sungiant.Cloud.Azure.Azure(Configuration.Instance.DjinnAzureFile);
 			}
 
 		}
 
-		static DjinnTask CreateFrom(String task, String extra, Deployment deployment)
+		static Task CreateFrom(String task, String extra, Deployment deployment)
 		{
 			if (task == "ssh")
 			{
-				return new DjinnSshTask(CloudProvider, deployment);
+				return new Tasks.Ssh(CloudProvider, deployment);
 			}
 			else if (task == "provision")
 			{
-				return new DjinnProvisionTask(CloudProvider, deployment);
+				return new Tasks.Provision(CloudProvider, deployment);
 			}
 			else if (task == "deploy")
 			{
-				var deploy = new DjinnDeployTask(CloudProvider, deployment);
+				var deploy = new Tasks.Deploy(CloudProvider, deployment);
 				deploy.SpecificActionGroup = extra;
 				return deploy;
 			}
 			else if (task == "destroy")
 			{
-				return new DjinnDestroyTask(CloudProvider, deployment);
+				return new Tasks.Destroy(CloudProvider, deployment);
 			}
 			else if (task == "describe")
 			{
-				return new DjinnDescribeTask(CloudProvider, deployment);
+				return new Tasks.Describe(CloudProvider, deployment);
 			}
 			else if (task == "configure")
 			{
-				var configure = new DjinnConfigureTask(CloudProvider, deployment);
+				var configure = new Tasks.Configure(CloudProvider, deployment);
 				configure.SpecificActionGroup = extra;
 				return configure;
 			}
@@ -267,7 +267,7 @@ namespace Sungiant.Djinn
 			return null;
 		}
 
-		static DjinnTask ParseArguments(String[] args)
+		static Task ParseArguments(String[] args)
 		{
 			if (args.Length < 3 )
 			{
@@ -308,7 +308,7 @@ namespace Sungiant.Djinn
 			Console.WriteLine ("");
 			Console.WriteLine("Djinn is a utility to aid infrastructure deployment across various cloud providers.");
 			Console.WriteLine ("");
-			Console.WriteLine("Install time: " + DjinnConfiguration.Instance.InstallDateTime.ToString() );
+			Console.WriteLine("Install time: " + Configuration.Instance.InstallDateTime.ToString() );
 			
 			Console.WriteLine ("");
 			Console.WriteLine("Usage:\n  djinn <task> <deployment_specification> <machine_specification>");

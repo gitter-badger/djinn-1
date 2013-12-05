@@ -7,13 +7,13 @@ using Sungiant.Core;
 using System.Text;
 using Sungiant.Cloud;
 
-namespace Sungiant.Djinn
+namespace Sungiant.Djinn.Tasks
 {
-	public class DjinnDescribeTask
-		: DjinnTask
+	public class Describe
+		: Task
 	{
-		public DjinnDescribeTask (ICloudProvider cloudProvider, Deployment deployment)
-			: base (Task.Describe, cloudProvider, deployment) {}
+		public Describe (ICloudProvider cloudProvider, Deployment deployment)
+			: base (TaskType.Describe, cloudProvider, deployment) {}
 
 		public override void Run()
 		{

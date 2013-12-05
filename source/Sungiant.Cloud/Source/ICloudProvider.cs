@@ -240,7 +240,7 @@ namespace Sungiant.Cloud
 	{
 		Int32 VerticleScale { get; }
 		Int32 HorizontalScale { get; }
-		List<String> Endpoints { get; }
+		List<String> Endpoints { get; } //todo: endpoints should be a class with public and private ips, and dns names
 		CloudDeploymentIdentity Identifier { get; }
 		CloudDeploymentStatus Status { get; }
 	}

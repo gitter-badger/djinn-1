@@ -1,6 +1,6 @@
 using System;
 
-namespace Sungiant.Djinn
+namespace Sungiant.Djinn.Actions
 {
 	public abstract class NginxLocationBlock
 	{

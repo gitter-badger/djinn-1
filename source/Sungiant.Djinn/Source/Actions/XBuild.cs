@@ -4,7 +4,9 @@ using Sungiant.Core;
 using ServiceStack.Text;
 using System.IO;
 
-namespace Sungiant.Djinn
+using DjinnCommand = Sungiant.Djinn.Command;
+
+namespace Sungiant.Djinn.Actions
 {
 	public class XBuild
 		: Action<Specification.XBuild>
@@ -29,28 +31,29 @@ namespace Sungiant.Djinn
 			get { return Specification.IsContextRemote ? MachineContext.Remote : MachineContext.Local; }
 		}
 
-		public override void Perform (ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
+		public override DjinnCommand[] GetRunnableCommands (ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
 		{
-			LogPerform();
-
-			if (string.IsNullOrEmpty (Specification.Verbosity))
+			if (String.IsNullOrEmpty (Specification.Verbosity))
 			{
 				Specification.Verbosity = "minimal";
 			}
 
-			var command = new string[]
+			var command = new String[]
 			{
 				"xbuild",
 				"\"" + ProjectPath + "\"",
-				string.Format("/p:Configuration={0}", Specification.Configuration),
-				string.Format("/verbosity:{0}", Specification.Verbosity)
+				String.Format("/p:Configuration={0}", Specification.Configuration),
+				String.Format("/verbosity:{0}", Specification.Verbosity)
 			}.Join(" ");
 
-			switch(Context)
-			{
-				case MachineContext.Local: ProcessHelper.Run(command, Console.WriteLine); break;
-				case MachineContext.Remote: cloudProvider.RunCommand(cloudDeployment, command); break;
-			}
+			var result = new DjinnCommand[] {
+				new DjinnCommand {
+					MachineContext = Context,
+					Value = command
+				}
+			};
+
+			return result;
 		}
 	}
 }

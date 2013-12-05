@@ -6,15 +6,15 @@ using Sungiant.Core;
 using System.Text;
 using Sungiant.Cloud;
 
-namespace Sungiant.Djinn
+namespace Sungiant.Djinn.Tasks
 {
-	public class DjinnDeployTask
-		: DjinnTask
+	public class Configure
+		: Task
 	{
 		public String SpecificActionGroup { get; set; }
 
-		public DjinnDeployTask (ICloudProvider cloudProvider, Deployment deployment)
-			: base (Task.Deploy, cloudProvider, deployment) {}
+		public Configure (ICloudProvider cloudProvider, Deployment deployment)
+			: base (TaskType.Configure, cloudProvider, deployment) {}
 
 		public override void Run()
 		{
@@ -22,17 +22,15 @@ namespace Sungiant.Djinn
 			
 			if (cd != null)
 			{
-				foreach( var actionGroup in Deployment.Blueprint.Deploy )
+				foreach( var actionGroup in Deployment.Blueprint.Configure )
 				{
 					if(SpecificActionGroup != null && SpecificActionGroup != actionGroup.Identifier)
 						continue;
 
-					Console.WriteLine("Deploying -> " + actionGroup.Description);
+					Console.WriteLine("Configure -> " + actionGroup.Description);
 
-					foreach( var action in actionGroup.Actions )
-					{
-						action.Perform(CloudProvider, cd);
-					}
+					var commandRunner = new CommandRunner (this.CloudProvider, cd);
+					commandRunner.RunBatch (actionGroup);
 				}
 			}
 		}
