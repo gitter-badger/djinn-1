@@ -4,8 +4,11 @@ using Sungiant.Core;
 using System.IO;
 using System.Collections.Generic;
 using ServiceStack.Text;
+using System.Linq;
 
-namespace Sungiant.Djinn
+using DjinnCommand = Sungiant.Djinn.Command;
+
+namespace Sungiant.Djinn.Actions
 {
 	public class Scp
 		: Action<Specification.Scp>
@@ -56,69 +59,48 @@ namespace Sungiant.Djinn
 				if (Specification.Recursive) result.Add("-r");
 				if (Specification.Verbose) result.Add("-v");
 				if (Specification.Quiet) result.Add("-q");
-				
+
 				return result.ToArray();
 			}
 		}
 
-		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
+		public override DjinnCommand[] GetRunnableCommands (ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
 		{
-			LogPerform();
+			var commands = new List<String> ();
 
-			if( SourceContext == MachineContext.Local && DestinationContext == MachineContext.Local )
+			if (SourceContext == MachineContext.Local && DestinationContext == MachineContext.Local ||
+				SourceContext == MachineContext.Remote && DestinationContext == MachineContext.Remote)
 			{
-				ProcessHelper.Run(
-					new String[]
-					{
+				commands.Add (
+					new String[] {
 						"scp",
-						Arguments.Join(" "),
+						Arguments.Join (" "),
 						Source,
 						Destination
-					}.Join(" "),
-					Console.WriteLine);
-
-				return;
+					}.Join (" ")
+				);
 			}
-			
-			if( SourceContext == MachineContext.Remote && DestinationContext == MachineContext.Remote )
+			else if (SourceContext == MachineContext.Local && DestinationContext == MachineContext.Remote)
 			{
-				cloudProvider.RunCommand(
-					cloudDeployment,
-					new String[]
-					{
-						"scp",
-						Arguments.Join(" "),
-						Source,
-						Destination
-					}.Join(" "));
-
-				return;
-			}
-			
-			if( SourceContext == MachineContext.Local && DestinationContext == MachineContext.Remote )
-			{
-				foreach( var endpoint in cloudDeployment.Endpoints )
+				foreach (var endpoint in cloudDeployment.Endpoints)
 				{
-					ProcessHelper.Run (
-						new String[]
-						{
+					commands.Add (
+						new String[] {
 							"scp",
 							Arguments.Join(" "),
 							"-o StrictHostKeyChecking=no",
 							String.Format("-i {0}", cloudProvider.PrivateKeyPath),
 							Source,
 							String.Format("{0}@{1}:{2}", cloudProvider.User, endpoint, Destination)
-						}.Join(" "),
-						Console.WriteLine);
+						}.Join(" "));
 				}
-				return;
 			}
-			
-			if( SourceContext == MachineContext.Remote && DestinationContext == MachineContext.Local )
+			else if (SourceContext == MachineContext.Remote && DestinationContext == MachineContext.Local)
 			{
-				foreach( var endpoint in cloudDeployment.Endpoints )
+				// todo, this is broken, because ypu might have 4 machines rsyncing down to just one
+				foreach (var endpoint in cloudDeployment.Endpoints)
 				{
-					ProcessHelper.Run (
+					commands.Add (
 						new String[]
 						{
 							"scp",
@@ -126,12 +108,22 @@ namespace Sungiant.Djinn
 							"-o StrictHostKeyChecking=no",
 							String.Format("-i {0}", cloudProvider.PrivateKeyPath),
 							String.Format("{0} {1}:{2}", cloudProvider.User, endpoint, Source),
-							Destination
-						}.Join(" "),
-						Console.WriteLine);
+							Path.Combine (Destination, endpoint)
+						}.Join(" ")
+					);
 				}
-				return;
 			}
+
+			var result = commands
+				.Select (x => 
+					new DjinnCommand () 
+					{ 
+						MachineContext = SourceContext,
+						Value = x 
+					})
+				.ToArray ();
+
+			return result;
 		}
 	}
 }

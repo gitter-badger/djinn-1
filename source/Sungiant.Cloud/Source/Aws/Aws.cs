@@ -94,6 +94,12 @@ namespace Sungiant.Cloud.Aws
 
 		}
 
+
+		static void WriteLineEx(String line)
+		{
+			Console.WriteLine(line.Replace ("\n", "\\n"));
+		}
+
 		public void RunCommands(ICloudDeployment deployment, String[] commands, Boolean ignoreFailures)
 		{
 			// we can't ignore failures if we batch up an array of commands,
@@ -104,17 +110,17 @@ namespace Sungiant.Cloud.Aws
 
 			foreach (var endpoint in deployment.Endpoints)
 			{
+				// filter out duff commands for safety
 				commands = commands
 					.Where (x => !String.IsNullOrEmpty (x))
-					.Select (x => x.Replace ("\"", "\\\""))
 					.ToArray ();
 
-				String command = String.Format ("\"{0}\"", String.Join ("; ", commands));
+				String command = String.Join ("; ", commands);
 
-				Console.WriteLine ("🏁  " + command);
+				WriteLineEx ("🏁  " + command);
 				Console.WriteLine ("");
 
-				Int32 exitCode = ProcessHelper.Run (
+				String sshCommand = 
 					new String[]
 					{
 						"ssh",
@@ -122,13 +128,17 @@ namespace Sungiant.Cloud.Aws
 						"-i", 
 						PrivateKeyPath,
 						String.Format ("{0}@{1}", User, endpoint),
-						command 
-					}.Join (" "),
-					Console.WriteLine);
+						"\"" + command.Replace ("\"", "\\\"") + "\""
+					}.Join (" ");
+
+
+				Int32 exitCode = ProcessHelper.Run (sshCommand, Console.WriteLine);
 
 				if (exitCode != 0 && !ignoreFailures)
 				{
-					throw new Exception ("Exited with code " + exitCode);
+					string msg = "Exited with code " + exitCode;
+					Console.WriteLine (msg);
+					throw new Exception (msg);
 				}
 			}
 		}

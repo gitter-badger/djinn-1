@@ -1,8 +1,11 @@
 using System;
 using Sungiant.Cloud;
 using Sungiant.Core;
+using System.Collections.Generic;
 
-namespace Sungiant.Djinn
+using DjinnCommand = Sungiant.Djinn.Command;
+
+namespace Sungiant.Djinn.Actions
 {
 	public class Commands
 		: Action<Specification.Commands>
@@ -15,32 +18,22 @@ namespace Sungiant.Djinn
 			get { return Specification.IsContextRemote ? MachineContext.Remote : MachineContext.Local; }
 		}
 
-		public override void Perform (ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
+		public override DjinnCommand[] GetRunnableCommands (ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
 		{
-			LogPerform ();
+			var result = new List<DjinnCommand>();
 
-			switch (Context)
+			foreach (String value in Specification.Values)
 			{
-				case MachineContext.Local: 
-					{
-						// todo: this should always be run from the DjinnContext
-						foreach (String val in Specification.Values)
-						{
-							Int32 exitCode = ProcessHelper.Run (val, Console.WriteLine);
+				var rcmd = new DjinnCommand {
+					MachineContext = Context,
+					IgnoreErrors = Specification.IgnoreFailure,
+					Value = value
+				};
 
-							if (exitCode != 0 && !Specification.IgnoreFailure)
-							{
-								throw new Exception ("Exited with code " + exitCode);
-							}
-						}
-					}
-					break;
-				case MachineContext.Remote: 
-					{
-						cloudProvider.RunCommands (cloudDeployment, Specification.Values, Specification.IgnoreFailure); 
-					}
-					break;
+				result.Add (rcmd);
 			}
+
+			return result.ToArray();
 		}
 	}
 }

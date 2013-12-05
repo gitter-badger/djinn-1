@@ -4,13 +4,13 @@ using System.Linq;
 
 namespace Sungiant.Djinn
 {
-	public class DjinnEnvironment
+	public class Environment
 	{
 		readonly EnvironmentSetupData setupData;
 
 		readonly List<Project> projects;
 
-		public DjinnEnvironment(EnvironmentSetupData specification)
+		public Environment(EnvironmentSetupData specification)
 		{
 			this.setupData = specification;
 

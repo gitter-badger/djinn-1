@@ -5,7 +5,7 @@ namespace Sungiant.Djinn.Configuration
     /// <summary>
     /// 
     /// </summary>
-    public class DjinnInstallationFile
+    public class InstallationFile
     {
         /// <summary>
         /// When was Djinn last installed.  (todo: this should live in a different file)

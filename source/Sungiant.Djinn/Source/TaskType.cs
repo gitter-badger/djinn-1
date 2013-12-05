@@ -2,7 +2,7 @@ using System;
 
 namespace Sungiant.Djinn
 {
-	public enum Task
+	public enum TaskType
 	{
 		Configure,
 		Deploy,

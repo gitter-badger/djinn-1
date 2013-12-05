@@ -4,7 +4,9 @@ using Sungiant.Cloud;
 using Sungiant.Core;
 using ServiceStack.Text;
 
-namespace Sungiant.Djinn
+using DjinnCommand = Sungiant.Djinn.Command;
+
+namespace Sungiant.Djinn.Actions
 {
 	public class MdToolBuild
 		: Action<Specification.MdToolBuild>
@@ -29,10 +31,8 @@ namespace Sungiant.Djinn
 			get { return Specification.IsContextRemote ? MachineContext.Remote : MachineContext.Local; }
 		}
 
-		public override void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
+		public override DjinnCommand[] GetRunnableCommands (ICloudProvider cloudProvider, ICloudDeployment cloudDeployment)
 		{
-			LogPerform ();
-
 			if(!File.Exists (SolutionPath))
 			{
 				throw new Exception ("Solution file not found.");
@@ -54,12 +54,14 @@ namespace Sungiant.Djinn
 
 			String cmd = command + " " + arguments;
 
-			switch (Context)
-			{
-				case MachineContext.Local: ProcessHelper.Run (cmd, Console.WriteLine); break;
-				case MachineContext.Remote: cloudProvider.RunCommand (cloudDeployment, cmd); break;
-			}
+			var result = new DjinnCommand[] {
+				new DjinnCommand {
+					MachineContext = Context,
+					Value = cmd
+				}
+			};
 
+			return result;
 		}
 
 	}

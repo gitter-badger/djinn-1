@@ -6,13 +6,13 @@ using Sungiant.Core;
 using System.Text;
 using Sungiant.Cloud;
 
-namespace Sungiant.Djinn
+namespace Sungiant.Djinn.Tasks
 {
-	public class DjinnDestroyTask
-		: DjinnTask
+	public class Destroy
+		: Task
 	{
-		public DjinnDestroyTask (ICloudProvider cloudProvider, Deployment deployment)
-			: base (Task.Destroy, cloudProvider, deployment) {}
+		public Destroy (ICloudProvider cloudProvider, Deployment deployment)
+			: base (TaskType.Destroy, cloudProvider, deployment) {}
 
 		public override void Run()
 		{

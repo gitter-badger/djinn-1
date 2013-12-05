@@ -3,16 +3,16 @@ using Sungiant.Cloud;
 
 namespace Sungiant.Djinn
 {
-	public abstract class DjinnTask
+	public abstract class Task
 	{
-		protected DjinnTask(Task task, ICloudProvider cloudProvider, Deployment deployment)
+		protected Task(TaskType task, ICloudProvider cloudProvider, Deployment deployment)
 		{
-			Task = task;
+			TaskType = task;
 			CloudProvider = cloudProvider;
 			Deployment = deployment;
 		}
 
-		Task Task { get; set; }
+		TaskType TaskType { get; set; }
 
 		protected ICloudProvider CloudProvider { get; private set; }
 		protected Deployment Deployment { get; private set; }

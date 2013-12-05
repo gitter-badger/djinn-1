@@ -6,13 +6,13 @@ using Sungiant.Core;
 using System.Text;
 using Sungiant.Cloud;
 
-namespace Sungiant.Djinn
+namespace Sungiant.Djinn.Tasks
 {
-	public class DjinnSshTask
-		: DjinnTask
+	public class Ssh
+		: Task
 	{
-		public DjinnSshTask (ICloudProvider cloudProvider, Deployment deployment)
-			: base (Task.Ssh, cloudProvider, deployment) {}
+		public Ssh (ICloudProvider cloudProvider, Deployment deployment)
+			: base (TaskType.Ssh, cloudProvider, deployment) {}
 
 		public override void Run()
 		{
@@ -40,7 +40,12 @@ namespace Sungiant.Djinn
 				);
 
 				if (exitCode != 0)
-					throw new Exception("Exited with code " + exitCode);
+				{
+					if (exitCode == 255)
+						Console.WriteLine ("Session closed");
+					else
+						throw new Exception ("Exited with code " + exitCode);
+				}
 			}
 		}
 	}

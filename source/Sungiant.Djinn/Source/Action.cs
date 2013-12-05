@@ -8,16 +8,19 @@ namespace Sungiant.Djinn
 {
 	public abstract class Action
 	{
-		public abstract void Perform(ICloudProvider cloudProvider, ICloudDeployment cloudDeployment);
-
 		public static Action CreateFromSpecification(Specification.IAction specification, String djinnContext)
 		{
-			Type t = Type.GetType ("Sungiant.Djinn." + specification.Type + ", Sungiant.Djinn");
+			Type t = Type.GetType ("Sungiant.Djinn.Actions." + specification.Type + ", Sungiant.Djinn");
 
 			Object o = Activator.CreateInstance (t, specification, djinnContext);
 
 			return o as Action;
 		}
+
+		public abstract void LogDetails ();
+
+
+		public abstract Command[] GetRunnableCommands (ICloudProvider cloudProvider, ICloudDeployment cloudDeployment);
 	}
 
 	public abstract class Action<T>
@@ -42,7 +45,8 @@ namespace Sungiant.Djinn
 			this.djinnContext = djinnContext;
 		}
 
-		protected void LogPerform()
+		// todo: remove this, it's not really needed, anything needing a description should be in a group of its own
+		public override void LogDetails()
 		{
 			Console.WriteLine("ACTION: " + specification.Type + " Action: " + Specification.Description + "\n");
 		}
