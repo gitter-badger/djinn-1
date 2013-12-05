@@ -91,22 +91,20 @@ namespace Sungiant.Cloud.Aws
 					horizontalScale,
 					verticleScale);
 			}
-
 		}
-
 
 		static void WriteLineEx(String line)
 		{
 			Console.WriteLine(line.Replace ("\n", "\\n"));
 		}
 
-		public void RunCommands(ICloudDeployment deployment, String[] commands, Boolean ignoreFailures)
+		public void RunCommands(ICloudDeployment deployment, String[] commands, Boolean ignoreFailures, Boolean dryRun)
 		{
 			// we can't ignore failures if we batch up an array of commands,
 			// so debatch them if required.
 			if (ignoreFailures && commands.Length > 1)
 				foreach (String command in commands)
-					RunCommands (deployment, new String[]{ command }, ignoreFailures);
+					RunCommands (deployment, new String[]{ command }, ignoreFailures, dryRun);
 
 			foreach (var endpoint in deployment.Endpoints)
 			{
@@ -131,21 +129,25 @@ namespace Sungiant.Cloud.Aws
 						"\"" + command.Replace ("\"", "\\\"") + "\""
 					}.Join (" ");
 
-
-				Int32 exitCode = ProcessHelper.Run (sshCommand, Console.WriteLine);
-
-				if (exitCode != 0 && !ignoreFailures)
+				if (dryRun)
+					Console.WriteLine ("dry: " + sshCommand);
+				else
 				{
-					string msg = "Exited with code " + exitCode;
-					Console.WriteLine (msg);
-					throw new Exception (msg);
+					Int32 exitCode = ProcessHelper.Run (sshCommand, Console.WriteLine);
+
+					if (exitCode != 0 && !ignoreFailures)
+					{
+						string msg = "Exited with code " + exitCode;
+						Console.WriteLine (msg);
+						throw new Exception (msg);
+					}
 				}
 			}
 		}
 
-		public void RunCommand(ICloudDeployment deployment, String command, Boolean ignoreFailure)
+		public void RunCommand(ICloudDeployment deployment, String command, Boolean ignoreFailure, Boolean dryRun)
 		{
-			RunCommands (deployment, new String[]{ command }, ignoreFailure);
+			RunCommands (deployment, new String[]{ command }, ignoreFailure, dryRun);
 		}
 
 		public void Destroy(CloudDeploymentIdentity instanceIdentifier)

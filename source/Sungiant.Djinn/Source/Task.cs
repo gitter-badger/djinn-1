@@ -17,7 +17,7 @@ namespace Sungiant.Djinn
 		protected ICloudProvider CloudProvider { get; private set; }
 		protected Deployment Deployment { get; private set; }
 
-		public abstract void Run();
+		public abstract void Run(Boolean dryRun);
 	}
 }
 
