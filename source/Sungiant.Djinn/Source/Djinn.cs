@@ -56,6 +56,7 @@ namespace Sungiant.Djinn
 
 		static Int32 LogLevel { get; set; }
 		static Boolean ShowHelp { get; set; }
+		static Boolean DryRun { get; set; }
 
 		static ICloudProvider CloudProvider;
 
@@ -84,6 +85,11 @@ namespace Sungiant.Djinn
 					"shows the help message and exits", 
 					v => ShowHelp = v != null 
 				},
+				{ 
+					"d|dry", 
+					"dry run", 
+					d => DryRun = d != null 
+				}
 			};
 		}
 
@@ -222,7 +228,7 @@ namespace Sungiant.Djinn
 				return;
 			}
 
-			djinnTask.Run();
+			djinnTask.Run(DryRun);
 			Console.WriteLine ("Completed " + djinnTask.GetType().ToString ());
         }
 
@@ -255,12 +261,6 @@ namespace Sungiant.Djinn
 			{
 				return new Tasks.Provision(CloudProvider, deployment);
 			}
-			else if (task == "deploy")
-			{
-				var deploy = new Tasks.Deploy(CloudProvider, deployment);
-				deploy.SpecificActionGroup = extra;
-				return deploy;
-			}
 			else if (task == "destroy")
 			{
 				return new Tasks.Destroy(CloudProvider, deployment);
@@ -269,11 +269,11 @@ namespace Sungiant.Djinn
 			{
 				return new Tasks.Describe(CloudProvider, deployment);
 			}
-			else if (task == "configure")
+			else if (task == "configure" || task == "deploy")
 			{
-				var configure = new Tasks.Configure(CloudProvider, deployment);
-				configure.SpecificActionGroup = extra;
-				return configure;
+				var runActions = new Tasks.RunActions(CloudProvider, deployment);
+				runActions.SpecificActionGroup = extra;
+				return runActions;
 			}
 
 			return null;

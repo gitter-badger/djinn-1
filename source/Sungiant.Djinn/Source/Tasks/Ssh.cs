@@ -14,7 +14,7 @@ namespace Sungiant.Djinn.Tasks
 		public Ssh (ICloudProvider cloudProvider, Deployment deployment)
 			: base (TaskType.Ssh, cloudProvider, deployment) {}
 
-		public override void Run()
+		public override void Run(Boolean dryRun)
 		{
 			var cd = CloudProvider.Describe (Deployment.Identity);
 			

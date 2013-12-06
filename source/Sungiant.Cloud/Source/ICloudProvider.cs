@@ -256,9 +256,9 @@ namespace Sungiant.Cloud
 
 		void Destroy(CloudDeploymentIdentity identifier);
 
-		void RunCommand(ICloudDeployment deployment, String command, Boolean ignoreFailure = false);
+		void RunCommand(ICloudDeployment deployment, String command, Boolean ignoreFailure = false, Boolean dryRun = false);
 
-		void RunCommands(ICloudDeployment deployment, String[] commands, Boolean ignoreFailures = false);
+		void RunCommands(ICloudDeployment deployment, String[] commands, Boolean ignoreFailures = false, Boolean dryRun = false);
 
 		ICloudDeployment Describe(CloudDeploymentIdentity identifier);
 

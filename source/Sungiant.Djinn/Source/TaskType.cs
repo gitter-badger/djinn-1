@@ -4,8 +4,7 @@ namespace Sungiant.Djinn
 {
 	public enum TaskType
 	{
-		Configure,
-		Deploy,
+		RunActions,
 		Describe,
 		Destroy,
 		Provision,

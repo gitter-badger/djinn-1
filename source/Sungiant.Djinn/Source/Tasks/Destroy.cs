@@ -14,9 +14,8 @@ namespace Sungiant.Djinn.Tasks
 		public Destroy (ICloudProvider cloudProvider, Deployment deployment)
 			: base (TaskType.Destroy, cloudProvider, deployment) {}
 
-		public override void Run()
+		public override void Run(Boolean dryRun)
 		{
-			
 			var cd = CloudProvider.Describe (Deployment.Identity);
 			
 			if (cd != null)

@@ -44,9 +44,7 @@
     <Compile Include="Source\ProjectSetupData.cs" />
     <Compile Include="Source\EnvironmentSetupData.cs" />
     <Compile Include="Source\CommandRunner.cs" />
-    <Compile Include="Source\Tasks\Configure.cs" />
     <Compile Include="Source\Tasks\Destroy.cs" />
-    <Compile Include="Source\Tasks\Deploy.cs" />
     <Compile Include="Source\Tasks\Describe.cs" />
     <Compile Include="Source\Tasks\Provision.cs" />
     <Compile Include="Source\Tasks\Ssh.cs" />
@@ -70,6 +68,7 @@
     <Compile Include="Source\TaskType.cs" />
     <Compile Include="Source\Task.cs" />
     <Compile Include="Source\ConfiguratioManager.cs" />
+    <Compile Include="Source\Tasks\RunActions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

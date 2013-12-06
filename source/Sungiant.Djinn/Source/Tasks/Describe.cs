@@ -15,7 +15,7 @@ namespace Sungiant.Djinn.Tasks
 		public Describe (ICloudProvider cloudProvider, Deployment deployment)
 			: base (TaskType.Describe, cloudProvider, deployment) {}
 
-		public override void Run()
+		public override void Run(Boolean dryRun)
 		{
 			var cd = CloudProvider.Describe (Deployment.Identity);
 			

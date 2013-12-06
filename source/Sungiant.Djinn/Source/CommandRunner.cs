@@ -9,13 +9,16 @@ namespace Sungiant.Djinn
 	{
 		readonly ICloudProvider cloudProvider;
 		readonly ICloudDeployment cloudDeployment;
+		readonly Boolean dryRun;
 
 		public CommandRunner(
 			ICloudProvider cloudProvider, 
-			ICloudDeployment cloudDeployment)
+			ICloudDeployment cloudDeployment,
+			Boolean dryRun)
 		{
 			this.cloudProvider = cloudProvider;
 			this.cloudDeployment = cloudDeployment;
+			this.dryRun = dryRun;
 		}
 
 		List<Command> AggregateCommands(ActionGroup actionGroup)
@@ -56,27 +59,30 @@ namespace Sungiant.Djinn
 					continue;
 				}
 
-				switch (currentMachineContext.Value)
+				if (currentMachineContext.HasValue && currentMachineContext.Value == MachineContext.Local)
 				{
-					case MachineContext.Local: 
+					// todo: this should always be run from the DjinnContext
+					foreach (String val in currentCommands)
+					{
+						if (dryRun)
+							Console.WriteLine ("dry: " + val);
+						else
 						{
-							// todo: this should always be run from the DjinnContext
-							foreach (String val in currentCommands)
-							{
-								Int32 exitCode = ProcessHelper.Run (val, Console.WriteLine);
+							Int32 exitCode = ProcessHelper.Run (val, Console.WriteLine);
 
-								if (exitCode != 0 && !currentIgnoreErrors.Value)
-								{
-									throw new Exception ("Exited with code " + exitCode);
-								}
-							}
+							if (exitCode != 0 && !currentIgnoreErrors.Value)
+								throw new Exception ("Exited with code " + exitCode);
 						}
-						break;
-					case MachineContext.Remote: 
-						{
-							cloudProvider.RunCommands (cloudDeployment, currentCommands.ToArray(), currentIgnoreErrors.Value); 
-						}
-						break;
+
+					}
+				}
+				else if (currentMachineContext.HasValue && currentMachineContext.Value == MachineContext.Remote)
+				{
+					cloudProvider.RunCommands (
+						cloudDeployment, 
+						currentCommands.ToArray (), 
+						currentIgnoreErrors.Value,
+						dryRun);
 				}
 
 				//run grouped command

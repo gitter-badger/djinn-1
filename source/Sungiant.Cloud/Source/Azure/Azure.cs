@@ -13,12 +13,12 @@ namespace Sungiant.Cloud.Azure
 		public String User { get { return "sungiant"; } }
 
 
-		public void RunCommand(ICloudDeployment deployment, String commands, Boolean ignoreFailure)
+		public void RunCommand(ICloudDeployment deployment, String commands, Boolean ignoreFailure, Boolean dryRun)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public void RunCommands(ICloudDeployment deployment, String[] commands, Boolean ignoreFailures)
+		public void RunCommands(ICloudDeployment deployment, String[] commands, Boolean ignoreFailures, Boolean dryRun)
 		{
 			throw new NotImplementedException ();
 		}

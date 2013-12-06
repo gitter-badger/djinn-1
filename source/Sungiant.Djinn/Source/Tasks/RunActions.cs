@@ -8,28 +8,28 @@ using Sungiant.Cloud;
 
 namespace Sungiant.Djinn.Tasks
 {
-	public class Deploy
+	public class RunActions
 		: Task
 	{
 		public String SpecificActionGroup { get; set; }
 
-		public Deploy (ICloudProvider cloudProvider, Deployment deployment)
-			: base (TaskType.Deploy, cloudProvider, deployment) {}
+		public RunActions (ICloudProvider cloudProvider, Deployment deployment)
+			: base (TaskType.RunActions, cloudProvider, deployment) {}
 
-		public override void Run()
+		public override void Run(Boolean dryRun)
 		{
 			var cd = CloudProvider.Describe (Deployment.Identity);
 			
 			if (cd != null)
 			{
-				foreach( var actionGroup in Deployment.Blueprint.Deploy )
+				foreach( var actionGroup in Deployment.Blueprint.Configure )
 				{
 					if(SpecificActionGroup != null && SpecificActionGroup != actionGroup.Identifier)
 						continue;
 
-					Console.WriteLine("Deploying -> " + actionGroup.Description);
+					Console.WriteLine("Configure -> " + actionGroup.Description);
 
-					var commandRunner = new CommandRunner (this.CloudProvider, cd);
+					var commandRunner = new CommandRunner (this.CloudProvider, cd, dryRun);
 					commandRunner.RunBatch (actionGroup);
 				}
 			}
