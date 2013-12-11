@@ -67,8 +67,8 @@
     <Compile Include="Source\ActionGroup.cs" />
     <Compile Include="Source\TaskType.cs" />
     <Compile Include="Source\Task.cs" />
-    <Compile Include="Source\ConfiguratioManager.cs" />
     <Compile Include="Source\Tasks\RunActions.cs" />
+    <Compile Include="Source\ConfigurationManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

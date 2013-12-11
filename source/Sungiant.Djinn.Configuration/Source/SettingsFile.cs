@@ -7,7 +7,7 @@ namespace Sungiant.Djinn.Configuration
     /// </summary>
     public class SettingsFile
     {
-        public int ActiveWorkgroupIndex { get; set; }
+		public Int32 ActiveWorkgroup { get; set; }
     }
 }
 

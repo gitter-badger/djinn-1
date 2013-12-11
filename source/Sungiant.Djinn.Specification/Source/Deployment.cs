@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Sungiant.Djinn.Specification
 {
@@ -27,6 +28,8 @@ namespace Sungiant.Djinn.Specification
 		/// What size machines?
 		/// </summary>
 		public Int32 VerticalScale { get; set; }
+
+		public Dictionary<String, String> EnvironmentVariables { get; set; }
 	}
 }
 

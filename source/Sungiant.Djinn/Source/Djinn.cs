@@ -334,7 +334,6 @@ namespace Sungiant.Djinn
 			
 			Console.WriteLine ("Actions:\n  " + string.Join("\n  ", Enum.GetNames(typeof(TaskType))).ToLower()+ "\n");
 
-
 			foreach (var project in DjinnEnvironment.Projects)
 			{
 				Console.WriteLine("Project: " + project.LocalContext );
@@ -368,10 +367,7 @@ namespace Sungiant.Djinn
 			CloudProvider.PrintStatus();
 			
 			Console.WriteLine ("");
-
 		}
-		
-
     }
 }
 

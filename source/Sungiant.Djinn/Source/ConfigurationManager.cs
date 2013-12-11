@@ -23,7 +23,7 @@ namespace Sungiant.Djinn
 
 		public Configuration.DjinnFile.Workgroup ActiveWorkgroup
 		{
-			get { return DjinnFile.Workgroups[DjinnSettingsFile.ActiveWorkgroupIndex]; }
+			get { return DjinnFile.Workgroups[DjinnSettingsFile.ActiveWorkgroup]; }
 		}
 
 		public DateTime InstallDateTime
