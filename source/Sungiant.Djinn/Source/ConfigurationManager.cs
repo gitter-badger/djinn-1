@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using ServiceStack.Text;
-using Sungiant.Core;
 
 namespace Sungiant.Djinn
 {

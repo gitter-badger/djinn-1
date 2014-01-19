@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using Sungiant.Cloud;
-using Sungiant.Core;
 using ServiceStack.Text;
 
 using DjinnCommand = Sungiant.Djinn.Command;

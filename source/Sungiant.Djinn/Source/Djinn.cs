@@ -38,7 +38,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using ServiceStack.Text;
-using Sungiant.Core;
 using System.Text;
 using Sungiant.Cloud;
 using System.Threading;

@@ -1,7 +1,6 @@
 using System;
 using Sungiant.Cloud;
 using System.Collections.Generic;
-using Sungiant.Core;
 
 namespace Sungiant.Djinn
 {

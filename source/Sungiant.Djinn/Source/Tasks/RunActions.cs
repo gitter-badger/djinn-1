@@ -1,9 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using ServiceStack.Text;
-using Sungiant.Core;
-using System.Text;
 using Sungiant.Cloud;
 
 namespace Sungiant.Djinn.Tasks

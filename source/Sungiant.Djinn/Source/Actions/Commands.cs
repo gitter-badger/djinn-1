@@ -1,6 +1,5 @@
 using System;
 using Sungiant.Cloud;
-using Sungiant.Core;
 using System.Collections.Generic;
 
 using DjinnCommand = Sungiant.Djinn.Command;

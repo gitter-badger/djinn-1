@@ -15,8 +15,6 @@ using Amazon.DynamoDB;
 using Amazon.DynamoDB.Model;
 using Amazon.SQS;
 
-using Sungiant.Core;
-
 namespace Sungiant.Cloud.Aws
 {
 	public class Aws

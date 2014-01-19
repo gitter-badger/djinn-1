@@ -1,6 +1,5 @@
 using System;
 using Sungiant.Cloud;
-using Sungiant.Core;
 using ServiceStack.Text;
 using System.IO;
 

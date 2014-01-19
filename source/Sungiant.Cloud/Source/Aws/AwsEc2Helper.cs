@@ -8,8 +8,6 @@ using ServiceStack.Text;
 using Amazon;
 using Amazon.EC2;
 using Amazon.EC2.Model;
-using Sungiant.Core;
-
 
 namespace Sungiant.Cloud.Aws
 {

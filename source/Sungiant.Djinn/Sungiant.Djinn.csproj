@@ -69,6 +69,8 @@
     <Compile Include="Source\Task.cs" />
     <Compile Include="Source\Tasks\RunActions.cs" />
     <Compile Include="Source\ConfigurationManager.cs" />
+    <Compile Include="Source\Singleton.cs" />
+    <Compile Include="Source\DateTimeHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -90,10 +92,6 @@
     <ProjectReference Include="..\..\submodules\ndesk-options-mirror\custom_projects\NDesk.Options\NDesk.Options %28net40%29.csproj">
       <Project>{4DB54B83-D948-4D70-86BD-5EE2DC8E2CE8}</Project>
       <Name>NDesk.Options (net40)</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\submodules\core\build_examples\Sungiant.Core\Sungiant.Core %28net40%29.csproj">
-      <Project>{043738D8-7F8A-423C-BE25-F11A08F77F35}</Project>
-      <Name>Sungiant.Core (net40)</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sungiant.Cloud\Sungiant.Cloud.csproj">
       <Project>{39484047-9CD3-48FE-8D58-220ED4D4106D}</Project>
