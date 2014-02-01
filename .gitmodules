@@ -1,9 +1,9 @@
 [submodule "submodules/ServiceStack.Text"]
 	path = submodules/ServiceStack.Text
-	url = git@github.com:sungiant/ServiceStack.Text.git
+url=git@github.com:ajpook-forks/ServiceStack.Text.git
 [submodule "submodules/aws-sdk-net"]
 	path = submodules/aws-sdk-net
-	url = git@github.com:sungiant/aws-sdk-net.git
+url=git@github.com:ajpook-forks/aws-sdk-net.git
 [submodule "submodules/ndesk-options-mirror"]
 	path = submodules/ndesk-options-mirror
-	url = git@github.com:sungiant/ndesk-options-mirror.git
+url=git@github.com:ajpook-forks/ndesk-options-mirror.git
