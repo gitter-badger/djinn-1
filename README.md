@@ -1,5 +1,10 @@
 <img src="logo.jpg" width="192px"/>
 
+Build Status
+============
+
+**Vanilla Mono:** [![Build Status](https://travis-ci.org/djinnOPS/djinn.png?branch=development)](https://travis-ci.org/djinnOPS/djinn)
+
 Getting Started
 ===============
 

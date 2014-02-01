@@ -1,0 +1,11 @@
+language:
+    cpp
+
+before_install:
+    sudo apt-get -y update;
+
+install:
+    sudo apt-get -y install mono-complete;
+
+script:
+    xbuild "source/Sungiant.Djinn/Sungiant.Djinn.csproj" /p:Configuration=Release
