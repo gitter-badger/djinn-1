@@ -10,7 +10,13 @@
         {
             "BlueprintIdentifier": "cpuminer",
             "HorizontalScale": 1,
-            "VerticalScale": 1
+            "VerticalScale": 1,
+            "EnvironmentVariables":
+            {
+                "MINER_URL": "stratum+tcp://ftc.give-me-coins.com:3333",
+                "MINER_USER": "xxx",
+                "MINER_PASS": "xxx",
+            }
         }
     ]
 }
