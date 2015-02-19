@@ -44,136 +44,136 @@ using System.Threading;
 
 namespace Sungiant.Djinn
 {
-	internal class JsonTypeObject
-	{
-		public String Type { get; set; }
-	}
-
-	static class Djinn
+    internal class JsonTypeObject
     {
-		public static Environment DjinnEnvironment { get; private set; }
+        public String Type { get; set; }
+    }
 
-		static Int32 LogLevel { get; set; }
-		static Boolean ShowHelp { get; set; }
-		static Boolean DryRun { get; set; }
+    static class Djinn
+    {
+        public static Environment DjinnEnvironment { get; private set; }
 
-		static ICloudProvider CloudProvider;
+        static Int32 LogLevel { get; set; }
+        static Boolean ShowHelp { get; set; }
+        static Boolean DryRun { get; set; }
 
-		static OptionSet OptionSet;
+        static ICloudProvider CloudProvider;
 
-		const string Version = "0.2.4";
+        static OptionSet OptionSet;
 
-		static Djinn()
-		{
-			LogLevel = 1;
+        const string Version = "0.2.4";
 
-			OptionSet = new OptionSet()
-			{
-				{ 
-					"q|quiet=", 
-					"reduce output level",
-					v => { LogLevel--; } 
-				},
-				{ 
-					"v|verbose=", 
-					"increase output level",
-					v =>  { LogLevel++; } 
-				},
-				{ 
-					"h|?|help", 
-					"shows the help message and exits", 
-					v => ShowHelp = v != null 
-				},
-				{ 
-					"d|dry", 
-					"dry run", 
-					d => DryRun = d != null 
-				}
-			};
-		}
+        static Djinn()
+        {
+            LogLevel = 1;
 
-		readonly static List<String> supportedExtensions = new List<String>(){ ".xml", ".json" };
+            OptionSet = new OptionSet()
+            {
+                { 
+                    "q|quiet=", 
+                    "reduce output level",
+                    v => { LogLevel--; } 
+                },
+                { 
+                    "v|verbose=", 
+                    "increase output level",
+                    v =>  { LogLevel++; } 
+                },
+                { 
+                    "h|?|help", 
+                    "shows the help message and exits", 
+                    v => ShowHelp = v != null 
+                },
+                { 
+                    "d|dry", 
+                    "dry run", 
+                    d => DryRun = d != null 
+                }
+            };
+        }
 
-		public static List<T> LoadSpecifications<T>(String directory) where T : class, new()
-		{
-			var result = Directory.GetFiles (directory)
-			    // filter out unsupported file types
-				.Where (x => supportedExtensions.Contains(Path.GetExtension(x).ToLower()))
-				// strip off the file name
-				.Select (x => Path.GetFileNameWithoutExtension (x))
-				// select distinct filenames, incase there are files of 
-				// the same name but with different supported extensions
-				.Distinct ()
-				// select the first extension that exists
-				.Select (x => x + supportedExtensions.Find(y => File.Exists(Path.Combine(directory, x + y))))
-				// deserialise the chosen file
-				.Select(x => FromFile<T>(Path.Combine(directory, x)))
-				// filter out acceptable error case
-				.Where(x => x != null)
-				// and return
-				.ToList();
+        readonly static List<String> supportedExtensions = new List<String>(){ ".xml", ".json" };
 
-			return result;
-		}
+        public static List<T> LoadSpecifications<T>(String directory) where T : class, new()
+        {
+            var result = Directory.GetFiles (directory)
+                // filter out unsupported file types
+                .Where (x => supportedExtensions.Contains(Path.GetExtension(x).ToLower()))
+                // strip off the file name
+                .Select (x => Path.GetFileNameWithoutExtension (x))
+                // select distinct filenames, incase there are files of 
+                // the same name but with different supported extensions
+                .Distinct ()
+                // select the first extension that exists
+                .Select (x => x + supportedExtensions.Find(y => File.Exists(Path.Combine(directory, x + y))))
+                // deserialise the chosen file
+                .Select(x => FromFile<T>(Path.Combine(directory, x)))
+                // filter out acceptable error case
+                .Where(x => x != null)
+                // and return
+                .ToList();
 
-		public static T FromFile<T>(String file) where T : class, new()
-		{
-			if (!File.Exists (file))
-				throw new Exception ("Failed to find file: " + file);
+            return result;
+        }
 
-			String allText = file.ReadAllText ();
+        public static T FromFile<T>(String file) where T : class, new()
+        {
+            if (!File.Exists (file))
+                throw new Exception ("Failed to find file: " + file);
 
-			if (string.IsNullOrWhiteSpace (allText))
-			{
-				return null;
-			}
+            String allText = file.ReadAllText ();
 
-			T spec = null;
-			String ext = Path.GetExtension (file).ToLower();
+            if (string.IsNullOrWhiteSpace (allText))
+            {
+                return null;
+            }
 
-			if (ext == supportedExtensions[0])
-			{
-				spec = allText.FromXml<T> ();
-			}
-			else if (ext == supportedExtensions[1])
-			{
-				spec = allText.FromJson<T> ();
-			}
+            T spec = null;
+            String ext = Path.GetExtension (file).ToLower();
 
-			if (spec == null)
-				throw new Exception ("Failed to deserialize file: " + file);
+            if (ext == supportedExtensions[0])
+            {
+                spec = allText.FromXml<T> ();
+            }
+            else if (ext == supportedExtensions[1])
+            {
+                spec = allText.FromJson<T> ();
+            }
 
-			return spec;
-		}
+            if (spec == null)
+                throw new Exception ("Failed to deserialize file: " + file);
 
-		static void ConfigureCustomJsonDeserialization()
-		{
-			JsConfig<Specification.INginxLocationBlock>.RawDeserializeFn = (String s) =>
-			{
-				var d = s.FromJson<JsonTypeObject>();
+            return spec;
+        }
 
-				var t = Type.GetType("Sungiant.Djinn.Specification." + d.Type + ", Sungiant.Djinn.Specification");
+        static void ConfigureCustomJsonDeserialization()
+        {
+            JsConfig<Specification.INginxLocationBlock>.RawDeserializeFn = (String s) =>
+            {
+                var d = s.FromJson<JsonTypeObject>();
 
-				Object o = JsonSerializer.DeserializeFromString(s, t);
+                var t = Type.GetType("Sungiant.Djinn.Specification." + d.Type + ", Sungiant.Djinn.Specification");
 
-				return (o as Specification.INginxLocationBlock);
-			};
+                Object o = JsonSerializer.DeserializeFromString(s, t);
 
-			JsConfig<Specification.IAction>.RawDeserializeFn = (String s) =>
-			{
-				var d = s.FromJson<JsonTypeObject>();
+                return (o as Specification.INginxLocationBlock);
+            };
 
-				var t = Type.GetType("Sungiant.Djinn.Specification." + d.Type + ", Sungiant.Djinn.Specification");
+            JsConfig<Specification.IAction>.RawDeserializeFn = (String s) =>
+            {
+                var d = s.FromJson<JsonTypeObject>();
 
-				Object o = JsonSerializer.DeserializeFromString(s, t);
+                var t = Type.GetType("Sungiant.Djinn.Specification." + d.Type + ", Sungiant.Djinn.Specification");
 
-				return (o as Specification.IAction);
-			};
-		}
+                Object o = JsonSerializer.DeserializeFromString(s, t);
+
+                return (o as Specification.IAction);
+            };
+        }
         
         public static void Main (string[] args)
         {
-			
+            
             Console.WriteLine ("________        ____.___ _______    _______   ");
             Console.WriteLine ("\\______ \\      |    |   |\\      \\   \\      \\");
             Console.WriteLine (" |    |  \\     |    |   |/   |   \\  /   |   \\ ");
@@ -184,14 +184,14 @@ namespace Sungiant.Djinn
 
             ConfigureCustomJsonDeserialization ();
 
-			// loads up djinn's configuration file
-			ConfigurationManager.Instance.Load ();
+            // loads up djinn's configuration file
+            ConfigurationManager.Instance.Load ();
 
             InitiliseCloudProvider ();
 
-			Console.WriteLine ("Active Workgroup: " + ConfigurationManager.Instance.ActiveWorkgroup.WorkgroupIdentifier);
+            Console.WriteLine ("Active Workgroup: " + ConfigurationManager.Instance.ActiveWorkgroup.WorkgroupIdentifier);
 
-			var environmentSetupData = new EnvironmentSetupData (ConfigurationManager.Instance.ActiveWorkgroup.WorkgroupIdentifier);
+            var environmentSetupData = new EnvironmentSetupData (ConfigurationManager.Instance.ActiveWorkgroup.WorkgroupIdentifier);
 
             foreach (var projectConfig in ConfigurationManager.Instance.ActiveWorkgroup.ProjectConfigurations)
             {
@@ -207,166 +207,166 @@ namespace Sungiant.Djinn
                     continue;
                 }
                 
-				var blueprint_specs = LoadSpecifications<Specification.Blueprint> (projectConfig.BlueprintsDirectory);
-				var zone_specs = LoadSpecifications<Specification.Zone> (projectConfig.ZonesDirectory);
+                var blueprint_specs = LoadSpecifications<Specification.Blueprint> (projectConfig.BlueprintsDirectory);
+                var zone_specs = LoadSpecifications<Specification.Zone> (projectConfig.ZonesDirectory);
 
-				environmentSetupData.AddProject (
-					projectConfig.DjinnDirectory,
-					blueprint_specs,
-					zone_specs
-				);
-			}
+                environmentSetupData.AddProject (
+                    projectConfig.DjinnDirectory,
+                    blueprint_specs,
+                    zone_specs
+                );
+            }
 
-			DjinnEnvironment = new Environment(environmentSetupData);
+            DjinnEnvironment = new Environment(environmentSetupData);
 
-			Task djinnTask = ParseArguments(args);
+            Task djinnTask = ParseArguments(args);
 
-			if (ShowHelp || djinnTask == null) 
-			{
-				PrintHelp ();
-				return;
-			}
+            if (ShowHelp || djinnTask == null) 
+            {
+                PrintHelp ();
+                return;
+            }
 
-			djinnTask.Run(DryRun);
-			Console.WriteLine ("Completed " + djinnTask.GetType().ToString ());
+            djinnTask.Run(DryRun);
+            Console.WriteLine ("Completed " + djinnTask.GetType().ToString ());
         }
 
-		static void InitiliseCloudProvider()
-		{
-			if (ConfigurationManager.Instance.DjinnAwsFile != null && ConfigurationManager.Instance.DjinnAzureFile != null)
-			{
-				throw new NotImplementedException("todo: do you want to use azure or aws?");
-			}
-			
-			if (ConfigurationManager.Instance.DjinnAwsFile != null)
-			{
-				CloudProvider = new Sungiant.Cloud.Aws.Aws(ConfigurationManager.Instance.DjinnAwsFile);
-			}
-			
-			if (ConfigurationManager.Instance.DjinnAzureFile != null)
-			{
-				CloudProvider = new Sungiant.Cloud.Azure.Azure(ConfigurationManager.Instance.DjinnAzureFile);
-			}
+        static void InitiliseCloudProvider()
+        {
+            if (ConfigurationManager.Instance.DjinnAwsFile != null && ConfigurationManager.Instance.DjinnAzureFile != null)
+            {
+                throw new NotImplementedException("todo: do you want to use azure or aws?");
+            }
+            
+            if (ConfigurationManager.Instance.DjinnAwsFile != null)
+            {
+                CloudProvider = new Sungiant.Cloud.Aws.Aws(ConfigurationManager.Instance.DjinnAwsFile);
+            }
+            
+            if (ConfigurationManager.Instance.DjinnAzureFile != null)
+            {
+                CloudProvider = new Sungiant.Cloud.Azure.Azure(ConfigurationManager.Instance.DjinnAzureFile);
+            }
 
-		}
+        }
 
-		static Task CreateFrom(String task, String extra, Deployment deployment)
-		{
-			if (task == "ssh")
-			{
-				return new Tasks.Ssh(CloudProvider, deployment);
-			}
-			else if (task == "provision")
-			{
-				return new Tasks.Provision(CloudProvider, deployment);
-			}
-			else if (task == "destroy")
-			{
-				return new Tasks.Destroy(CloudProvider, deployment);
-			}
-			else if (task == "describe")
-			{
-				return new Tasks.Describe(CloudProvider, deployment);
-			}
-			else if (task == "configure" || task == "deploy")
-			{
-				var runActions = new Tasks.RunActions(CloudProvider, deployment);
-				runActions.SpecificActionGroup = extra;
-				return runActions;
-			}
+        static Task CreateFrom(String task, String extra, Deployment deployment)
+        {
+            if (task == "ssh")
+            {
+                return new Tasks.Ssh(CloudProvider, deployment);
+            }
+            else if (task == "provision")
+            {
+                return new Tasks.Provision(CloudProvider, deployment);
+            }
+            else if (task == "destroy")
+            {
+                return new Tasks.Destroy(CloudProvider, deployment);
+            }
+            else if (task == "describe")
+            {
+                return new Tasks.Describe(CloudProvider, deployment);
+            }
+            else if (task == "configure" || task == "deploy")
+            {
+                var runActions = new Tasks.RunActions(CloudProvider, deployment);
+                runActions.SpecificActionGroup = extra;
+                return runActions;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		static Task ParseArguments(String[] args)
-		{
-			if (args.Length < 3 )
-			{
-				ShowHelp = true;
-				return null;
-			}
-			
-			String task = args[0];
-			String deploymentGroupIdentifier = args[1];
-			String machineBlueprintIdentifier = args[2];
-			String extra = null;
+        static Task ParseArguments(String[] args)
+        {
+            if (args.Length < 3 )
+            {
+                ShowHelp = true;
+                return null;
+            }
+            
+            String task = args[0];
+            String deploymentGroupIdentifier = args[1];
+            String machineBlueprintIdentifier = args[2];
+            String extra = null;
 
-			if( args.Length == 4 )
-			{
-				extra = args[3];
-			}
+            if( args.Length == 4 )
+            {
+                extra = args[3];
+            }
 
-			OptionSet.Parse (args);
+            OptionSet.Parse (args);
 
-			// make sure the deployment we want to talk to exists
-			var deployment = DjinnEnvironment.Projects
-				.SelectMany(x => x.Deployments)
-				.ToList()
-				.Find (x => (x.Zone.Identifier == deploymentGroupIdentifier && x.Blueprint.Identifier == machineBlueprintIdentifier));
+            // make sure the deployment we want to talk to exists
+            var deployment = DjinnEnvironment.Projects
+                .SelectMany(x => x.Deployments)
+                .ToList()
+                .Find (x => (x.Zone.Identifier == deploymentGroupIdentifier && x.Blueprint.Identifier == machineBlueprintIdentifier));
 
-			if (deployment == null)
-			{
-				ShowHelp = true;
+            if (deployment == null)
+            {
+                ShowHelp = true;
 
-				return null;
-			}
+                return null;
+            }
 
-			return CreateFrom(task, extra, deployment);
-		}
+            return CreateFrom(task, extra, deployment);
+        }
 
-		static void PrintHelp()
-		{
-			Console.WriteLine ("");
-			Console.WriteLine("Djinn is a utility to aid infrastructure deployment across various cloud providers.");
-			Console.WriteLine ("");
-			Console.WriteLine("Install time: " + ConfigurationManager.Instance.InstallDateTime.ToString() );
-			
-			Console.WriteLine ("");
-			Console.WriteLine("Usage:\n  djinn <task> <deployment_specification> <machine_specification>");
-			Console.WriteLine(string.Empty);
-			
-			using (var tw = new StringWriter() )
-			{
-				OptionSet.WriteOptionDescriptions(tw);
-				Console.WriteLine("Options:\n" + tw.GetStringBuilder().ToString());
-			}
-			
-			Console.WriteLine ("Actions:\n  " + string.Join("\n  ", Enum.GetNames(typeof(TaskType))).ToLower()+ "\n");
+        static void PrintHelp()
+        {
+            Console.WriteLine ("");
+            Console.WriteLine("Djinn is a utility to aid infrastructure deployment across various cloud providers.");
+            Console.WriteLine ("");
+            Console.WriteLine("Install time: " + ConfigurationManager.Instance.InstallDateTime.ToString() );
+            
+            Console.WriteLine ("");
+            Console.WriteLine("Usage:\n  djinn <task> <deployment_specification> <machine_specification>");
+            Console.WriteLine(string.Empty);
+            
+            using (var tw = new StringWriter() )
+            {
+                OptionSet.WriteOptionDescriptions(tw);
+                Console.WriteLine("Options:\n" + tw.GetStringBuilder().ToString());
+            }
+            
+            Console.WriteLine ("Actions:\n  " + string.Join("\n  ", Enum.GetNames(typeof(TaskType))).ToLower()+ "\n");
 
-			foreach (var project in DjinnEnvironment.Projects)
-			{
-				Console.WriteLine("Project: " + project.LocalContext );
-				Console.WriteLine ("");
-				
-				foreach (var deployment in project.Deployments)
-				{
-					Console.WriteLine("    + " + deployment.Identity);
-					
-					//var endpoints = CloudProvider.GetEndpoints(
-					//	deployment.DeploymentGroup.Id,
-					//	deployment.Blueprint.Id);
-					
-					//if( endpoints.Count != deployment.HorizontalScale )
-					//{
-					//	Console.WriteLine(string.Format("    - {0}/{1} endpoints", endpoints.Count, deployment.HorizontalScale ));
-					//}
-					//else
-					//{
-					//	endpoints.ForEach( x => Console.WriteLine("    - " + x + "\n"));
-					//}
-				}
-				Console.WriteLine ("");
-			}
+            foreach (var project in DjinnEnvironment.Projects)
+            {
+                Console.WriteLine("Project: " + project.LocalContext );
+                Console.WriteLine ("");
+                
+                foreach (var deployment in project.Deployments)
+                {
+                    Console.WriteLine("    + " + deployment.Identity);
+                    
+                    //var endpoints = CloudProvider.GetEndpoints(
+                    //  deployment.DeploymentGroup.Id,
+                    //  deployment.Blueprint.Id);
+                    
+                    //if( endpoints.Count != deployment.HorizontalScale )
+                    //{
+                    //  Console.WriteLine(string.Format("    - {0}/{1} endpoints", endpoints.Count, deployment.HorizontalScale ));
+                    //}
+                    //else
+                    //{
+                    //  endpoints.ForEach( x => Console.WriteLine("    - " + x + "\n"));
+                    //}
+                }
+                Console.WriteLine ("");
+            }
 
-			Console.WriteLine ("");
-			Console.WriteLine ("Cloud Provider Status");
-			Console.WriteLine ("---------------------");
-			Console.WriteLine ("");
+            Console.WriteLine ("");
+            Console.WriteLine ("Cloud Provider Status");
+            Console.WriteLine ("---------------------");
+            Console.WriteLine ("");
 
-			CloudProvider.PrintStatus();
-			
-			Console.WriteLine ("");
-		}
+            CloudProvider.PrintStatus();
+            
+            Console.WriteLine ("");
+        }
     }
 }
 

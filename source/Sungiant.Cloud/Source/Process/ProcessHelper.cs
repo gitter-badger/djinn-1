@@ -24,7 +24,7 @@ namespace Sungiant.Cloud
             }
 
             public void HandleOutput(object sendingProcess, DataReceivedEventArgs e)
-			{
+            {
                 if ( e.Data != null && this.commandLogger != null )
                 {
                     var lines = e.Data.Split('\n');
