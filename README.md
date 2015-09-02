@@ -3,7 +3,7 @@
 Build Status
 ============
 
-**Mono:** [![Build Status](https://travis-ci.org/ajpook/djinn.png?branch=development)](https://travis-ci.org/ajpook/djinn)
+**Mono:** [![Build Status](https://travis-ci.org/sungiant/djinn.png?branch=development)](https://travis-ci.org/sungiant/djinn)
 
 Getting Started
 ===============
